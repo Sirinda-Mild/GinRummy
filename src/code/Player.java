@@ -34,7 +34,6 @@ public class Player {
 //        }
 //
 //    }
-
     public void DropCard(Card card) {
 //        cards.remove(card);
     }
@@ -45,7 +44,13 @@ public class Player {
 //        value.set(0);
     }
 
-//    public SimpleIntegerProperty valueProperty() {
-//        return value;
-//    }
+    public int Deadwood() {
+        int deadwood = 0;
+        return deadwood;
+    }
+
+    public int Score() {
+        int score = 0;
+        return score;
+    }
 }

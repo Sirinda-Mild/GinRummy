@@ -35,5 +35,14 @@ public class Bot extends Player {
 //        super.takeCard(card, count); //To change body of generated methods, choose Tools | Templates.
 //    }
 
+    @Override
+    public int Deadwood() {
+        return super.Deadwood(); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public int Score() {
+        return super.Score(); //To change body of generated methods, choose Tools | Templates.
+    }
 
 }
