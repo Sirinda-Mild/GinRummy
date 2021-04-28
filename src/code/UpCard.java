@@ -15,17 +15,14 @@ import javafx.scene.Node;
 
 public class UpCard {
 
-    private ArrayList<Card> cards = new ArrayList<>();
-//    private SimpleIntegerProperty value = new SimpleIntegerProperty(0);
+    private ObservableList<Node> cards;
 
-    public UpCard(ArrayList<Card> cards) {
+    public UpCard(ObservableList<Node> cards) {
         this.cards = cards;
     }
 
-    public void keepCard(Card card, int count) {
-        for (int i = 0; i < count; i++) {
-            cards.add(card);
-        }
+    public void keepCard(Card card) {
+        cards.add(card);
     }
 
     public Node drawCard() {
@@ -34,8 +31,53 @@ public class UpCard {
         return card;
     }
 
+    public char getSuit(int index) {
+        return cards.get(index).toString().charAt(1);
+    }
+
+    public char getRank(int index) {
+        return cards.get(index).toString().charAt(0);
+    }
+
+    public int getRankValue(int index) {
+        int cardValue = 0;
+        if (cards.get(index).toString().charAt(0) == '0'
+                || cards.get(index).toString().charAt(0) == 'j'
+                || cards.get(index).toString().charAt(0) == 'q'
+                || cards.get(index).toString().charAt(0) == 'k') {
+            cardValue = 10;
+        } else {
+            cardValue = Character.getNumericValue(cards.get(index).toString().charAt(0));
+        }
+        return cardValue;
+    }
+
+    public int getSize() {
+        return cards.size();
+    }
+
+    public int checkStraight(int index) {
+        int cardValue = 0;
+        if (cards.get(index).toString().charAt(0) == '0') {
+            cardValue = 10;
+        } else if (cards.get(index).toString().charAt(0) == 'j') {
+            cardValue = 11;
+        } else if (cards.get(index).toString().charAt(0) == 'q') {
+            cardValue = 12;
+        } else if (cards.get(index).toString().charAt(0) == 'k') {
+            cardValue = 13;
+        } else {
+            cardValue = Character.getNumericValue(cards.get(index).toString().charAt(0));
+        }
+        return cardValue;
+    }
+
 //    public void reset() {
 //        cards.clear();
 //        value.set(0);
 //    }
+    @Override
+    public String toString() {
+        return cards.toString();
+    }
 }

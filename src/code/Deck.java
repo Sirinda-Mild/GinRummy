@@ -5,9 +5,8 @@ import java.util.Random;
 
 public class Deck {
 
-    private Card[] cards = new Card[52];
     private ArrayList<Card> deckStack = new ArrayList<>();
-    private String[] ranks = {"1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "j", "q", "k"};
+    private String[] ranks = {"1", "2", "3", "4", "5", "6", "7", "8", "9", "0", "j", "q", "k"};
     private String[] suits = {"c", "d", "h", "s"};
 
     public Deck() {
@@ -59,15 +58,12 @@ public class Deck {
     }
 
     public Card drawCard() {
-        System.out.println("draw");
         Card card = null;
         while (card == null) {
-            int index = (int) (Math.random() * cards.length);
-            card = cards[index];
-            cards[index] = null;
-            System.out.println("length" + cards.length + "index" + index);
+            int index = (int) (Math.random() * deckStack.size());
+            card = deckStack.get(index);
+            deckStack.remove(index);
         }
-        System.out.println("draw finish");
         return card;
     }
 }

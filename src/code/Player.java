@@ -13,35 +13,28 @@ import javafx.scene.Node;
 
 public class Player {
 
-    private ArrayList<Card> cards = new ArrayList<>();
-//    private SimpleIntegerProperty value = new SimpleIntegerProperty(0);
+    private ObservableList<Node> cards;
 
-    public Player(ArrayList<Card> playerCards) {
-        this.cards = playerCards;
-        System.out.println("construct");
+    public Player(ObservableList<Node> cards) {
+        this.cards = cards;
     }
 
     public void takeCard(Card card) {
-        System.out.println("takecard");
         cards.add(card);
     }
 
-//    public void takeCard(Card card, int count) {
-//        System.out.println("takecard");
-//        for (int i = 0; i < count; i++) {
-//            System.out.println("adding" + i);
-//            cards.add(card);
-//        }
-//
-//    }
-    public void DropCard(Card card) {
-//        cards.remove(card);
+    public void toFront(int index) {
+        cards.get(index).toFront();
+    }
+
+    public Node DropCard(int index) {
+        Node card = cards.get(index);
+        cards.remove(index);
+        return card;
     }
 
     public void reset() {
-        System.out.println("reset");
         cards.clear();
-//        value.set(0);
     }
 
     public int Deadwood() {
@@ -53,4 +46,65 @@ public class Player {
         int score = 0;
         return score;
     }
+
+    public int getSize() {
+        return cards.size();
+    }
+
+    public char getSuit(int index) {
+        return cards.get(index).toString().charAt(1);
+    }
+
+    public char getRank(int index) {
+        return cards.get(index).toString().charAt(0);
+    }
+
+    public int getRankValue(int index) {
+        int cardValue = 0;
+        if (cards.get(index).toString().charAt(0) == '0'
+                || cards.get(index).toString().charAt(0) == 'j'
+                || cards.get(index).toString().charAt(0) == 'q'
+                || cards.get(index).toString().charAt(0) == 'k') {
+            cardValue = 10;
+        } else {
+            cardValue = Character.getNumericValue(cards.get(index).toString().charAt(0));
+        }
+        return cardValue;
+    }
+
+    public int getSuitValue(int index) {
+        int cardValue = 0;
+        if (cards.get(index).toString().charAt(0) == 'c') {
+            cardValue = 1;
+        } else if (cards.get(index).toString().charAt(0) == 'd') {
+            cardValue = 2;
+        } else if (cards.get(index).toString().charAt(0) == 'h') {
+            cardValue = 3;
+        } else if (cards.get(index).toString().charAt(0) == 's') {
+            cardValue = 4;
+        }
+        return cardValue;
+    }
+
+    public int checkStraight(int index) {
+        int cardValue = 0;
+        if (cards.get(index).toString().charAt(0) == '0') {
+            cardValue = 10;
+        } else if (cards.get(index).toString().charAt(0) == 'j') {
+            cardValue = 11;
+        } else if (cards.get(index).toString().charAt(0) == 'q') {
+            cardValue = 12;
+        } else if (cards.get(index).toString().charAt(0) == 'k') {
+            cardValue = 13;
+        } else {
+            cardValue = Character.getNumericValue(cards.get(index).toString().charAt(0));
+        }
+        return cardValue;
+    }
+
+    @Override
+    public String toString() {
+        return cards.toString();
+    }
+
 }

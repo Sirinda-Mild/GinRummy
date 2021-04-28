@@ -16,7 +16,7 @@ import javafx.scene.Node;
  */
 public class Bot extends Player {
 
-    public Bot(ArrayList<Card> cards) {
+    public Bot(ObservableList<Node> cards) {
         super(cards);
     }
 
@@ -26,14 +26,24 @@ public class Bot extends Player {
     }
 
     @Override
-    public void DropCard(Card card) {
-        super.DropCard(card); //To change body of generated methods, choose Tools | Templates.
+    public Node DropCard(int index) {
+        return super.DropCard(index); //To change body of generated methods, choose Tools | Templates.
     }
 
-//    @Override
-//    public void takeCard(Card card, int count) {
-//        super.takeCard(card, count); //To change body of generated methods, choose Tools | Templates.
-//    }
+    @Override
+    public int getSuitValue(int index) {
+        return super.getSuitValue(index); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void toFront(int index) {
+        super.toFront(index); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void takeCard(Card card) {
+        super.takeCard(card); //To change body of generated methods, choose Tools | Templates.
+    }
 
     @Override
     public int Deadwood() {
@@ -43,6 +53,37 @@ public class Bot extends Player {
     @Override
     public int Score() {
         return super.Score(); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public int getRankValue(int index) {
+        return super.getRankValue(index); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public char getRank(int index) {
+        return super.getRank(index); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public char getSuit(int index) {
+        return super.getSuit(index); //To change body of generated methods, choose Tools | Templates.
+    }
+
+
+    @Override
+    public int getSize() {
+        return super.getSize(); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public String toString() {
+        return super.toString(); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public int checkStraight(int index) {
+        return super.checkStraight(index); //To change body of generated methods, choose Tools | Templates.
     }
 
 }
