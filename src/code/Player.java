@@ -3,40 +3,44 @@ package code;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import javafx.beans.property.SimpleIntegerProperty;
+import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.Node;
 
 public class Player {
 
-    private ObservableList<Node> cards;
+    private ArrayList<Card> cards = new ArrayList<>();
 //    private SimpleIntegerProperty value = new SimpleIntegerProperty(0);
 
-    public Player(ObservableList<Node> cards) {
-        this.cards = cards;
+    public Player(ArrayList<Card> playerCards) {
+        this.cards = playerCards;
+        System.out.println("construct");
     }
 
     public void takeCard(Card card) {
+        System.out.println("takecard");
         cards.add(card);
+    }
 
-//        if (card.rank == Rank.ACE) {
-//            aces++;
+//    public void takeCard(Card card, int count) {
+//        System.out.println("takecard");
+//        for (int i = 0; i < count; i++) {
+//            System.out.println("adding" + i);
+//            cards.add(card);
 //        }
 //
-//        if (value.get() + card.value > 21 && aces > 0) {
-//            value.set(value.get() + card.value - 10);    //then count ace as '1' not '11'
-//            aces--;
-//        }
-//        else {
-//            value.set(value.get() + card.value);
-//        }
-    }
+//    }
 
     public void DropCard(Card card) {
 //        cards.remove(card);
     }
 
     public void reset() {
+        System.out.println("reset");
         cards.clear();
 //        value.set(0);
     }

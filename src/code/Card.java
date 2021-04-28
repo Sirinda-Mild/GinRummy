@@ -116,35 +116,15 @@ import javafx.scene.text.Text;
 
 public class Card extends Parent {
 
-    private static final int CARD_WIDTH = 80;
-    private static final int CARD_HEIGHT = 120;
+    private static final int CARD_WIDTH = 75;
+    private static final int CARD_HEIGHT = 110;
+    private String suit;
+    private String rank;
 
-    enum Suit {
-        c, d, h, s;
-    }
-//
-//    enum Rank {
-//        TWO(2), THREE(3), FOUR(4), FIVE(5), SIX(6), SEVEN(7), EIGHT(8), NINE(9), TEN(10),
-//        j(10), q(10), k(10), a(1);
-//
-//        final int value;
-//
-//        Rank(int value) {
-//            this.value = value;
-//        }
-//
-//        String displayName() {
-//            return ordinal() < 9 ? String.valueOf(value) : name().substring(0, 1);
-//        }
-//    }
-
-    public final Suit suit;
-    private int rank;
-
-    public Card(Suit suit, int rank) {
+    public Card(String suit, String rank) {
         this.suit = suit;
         this.rank = rank;
-        String imageLocation = "resources/" + Integer.toString(rank) + suit + ".png";
+        String imageLocation = "resources/" + rank + suit + ".png";
 
         Rectangle card = new Rectangle(CARD_WIDTH, CARD_HEIGHT);
         card.setArcWidth(15);
@@ -152,24 +132,15 @@ public class Card extends Parent {
         Image imgCard = new Image(imageLocation);
         card.setFill(new ImagePattern(imgCard));
 
-//        Text text1 = new Text(rank.displayName());
-//        text1.setFont(Font.font(18));
-//        text1.setX(CARD_WIDTH - text1.getLayoutBounds().getWidth() - 10);
-//        text1.setY(text1.getLayoutBounds().getHeight());
-//
-//        Text text2 = new Text(text1.getText());
-//        text2.setFont(Font.font(18));
-//        text2.setX(10);
-//        text2.setY(CARD_HEIGHT - 10);
-//        ImageView view = new ImageView(suit.image);
-//        view.setRotate(180);
-//        view.setX(CARD_WIDTH - 32);
-//        view.setY(CARD_HEIGHT - 32);
         getChildren().addAll(card);
+    }
+
+    private void backCard() {
+
     }
 
     @Override
     public String toString() {
-        return Integer.toString(rank) + " of " + suit.toString();
+        return rank.toString() + suit.toString();
     }
 }

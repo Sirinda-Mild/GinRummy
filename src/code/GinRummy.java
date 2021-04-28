@@ -5,6 +5,7 @@
  */
 package code;
 
+import java.util.ArrayList;
 import javafx.application.Application;
 import static javafx.application.Application.launch;
 import javafx.beans.property.SimpleBooleanProperty;
@@ -31,28 +32,42 @@ public class GinRummy extends Application {
     private Player player;
     private Bot bot;
     private UpCard upcard;
+    private DrawPile drawpile;
 //    private Text message = new Text();
 
     private SimpleBooleanProperty playable = new SimpleBooleanProperty(false);
 
-    private HBox botCards = new HBox(10);
-    private HBox playerCards = new HBox(10);
-    private HBox drawCards = new HBox(10);
-    private StackPane upCardPile = new StackPane();
-//    private StackPane upCard = new StackPane();
+    private HBox botCardsPane = new HBox(10);
+    private HBox playerCardsPane = new HBox(10);
+    private HBox drawCardsPane = new HBox(10);
+    private StackPane upCardPilePane = new StackPane();
+    private StackPane drawPilePane = new StackPane();
+    private ArrayList<Card> playerCards = new ArrayList<>();
+    private ArrayList<Card> botCards = new ArrayList<>();
+    private ArrayList<Card> upCardPile = new ArrayList<>();
+    private ArrayList<Card> drawPile = new ArrayList<>();
 
     private Parent createContent() {
-        botCards.setPadding(new Insets(5, 5, 5, 5));
-        playerCards.setPadding(new Insets(5, 5, 5, 5));
-        botCards.setAlignment(Pos.CENTER);
-        playerCards.setAlignment(Pos.CENTER);
-        upCardPile.setAlignment(Pos.CENTER);
-//        drawCards.setAlignment(Pos.CENTER);
-//        drawCards.getChildren().addAll(drawPile, upCard);
+        playerCardsPane.setPadding(new Insets(5, 5, 5, 5));
+        botCardsPane.setPadding(new Insets(5, 5, 5, 5));
+        
+        playerCardsPane.setAlignment(Pos.CENTER);
+        botCardsPane.setAlignment(Pos.CENTER);
+        upCardPilePane.setAlignment(Pos.CENTER);
+        drawPilePane.setAlignment(Pos.CENTER);
+        
+        player = new Player(playerCards);
+        bot = new Bot(botCards);
+        upcard = new UpCard(upCardPile);
+        drawpile = new DrawPile(drawPile);
 
-        bot = new Bot(botCards.getChildren());
-        player = new Player(playerCards.getChildren());
-        upcard = new UpCard(upCardPile.getChildren());
+        playerCardsPane.getChildren().addAll(playerCards);
+        botCardsPane.getChildren().addAll(botCards);
+        upCardPilePane.getChildren().addAll(upCardPile);
+        drawPilePane.getChildren().addAll(drawPile);
+        
+        drawCardsPane.setAlignment(Pos.CENTER);
+        drawCardsPane.getChildren().addAll(drawPilePane, upCardPilePane);
 
         Pane root = new Pane();
         root.setPrefSize(1000, 600);
@@ -78,18 +93,14 @@ public class GinRummy extends Application {
         buttonBox.setPadding(new Insets(5, 5, 5, 5));
         Button btnPass = new Button("PASS");
         Button btnTake = new Button("TAKE");
-
 //        Button btnNew = new Button("NEW");
 //        Button btnDiscard = new Button("DISCARD");
 //        Button btnKnock = new Button("KNOCK");
+
         buttonBox.getChildren().addAll(btnTake, btnPass);
         buttonBox.setAlignment(Pos.CENTER_RIGHT);
-        vbox.getChildren().addAll(botCards, botScore, upCardPile, buttonBox, playerScore, playerCards);
+        vbox.getChildren().addAll(botCardsPane, botScore, drawCardsPane, buttonBox, playerScore, playerCardsPane);
 
-//        HBox buttonsHBox = new HBox(15, btnHit, btnStand);
-//        buttonsHBox.setAlignment(Pos.CENTER);
-//
-//        rightVBox.getChildren().addAll(bet, btnPlay, money, buttonsHBox);
         // ADD BOTH STACKS TO ROOT LAYOUT
         rootLayout.getChildren().addAll(new StackPane(BG), new StackPane(vbox));
         root.getChildren().addAll(background, rootLayout);
@@ -114,14 +125,14 @@ public class GinRummy extends Application {
 //            }
 //        });
 //
-//        // INIT BUTTONS
+        // INIT BUTTONS
         btnTake.setOnAction(event -> {
-            upcard.DropCard();
+            
         });
 
-//        btnHit.setOnAction(event -> {
-//            player.takeCard(deck.drawCard());
-//        });
+        btnPass.setOnAction(event -> {
+
+        });
 //
 //        btnStand.setOnAction(event -> {
 //            while (dealer.valueProperty().get() < 17) {
@@ -131,6 +142,7 @@ public class GinRummy extends Application {
 //            endGame();
 //        });
         startNewGame();
+        System.out.println("start new game");
         return root;
     }
 
@@ -143,13 +155,10 @@ public class GinRummy extends Application {
         bot.reset();
         player.reset();
 
-        for (int i = 0; i < 10; i++) {
-            bot.takeCard(deck.drawCard());
-            player.takeCard(deck.drawCard());
-        }
-        for (int i = 0; i < 32; i++) {
-            upcard.takeCard(deck.drawCard());
-        }
+        player.takeCard(deck.drawCard());
+//        bot.takeCard(deck.drawCard(), 10);
+//        drawpile.keepCard(deck.drawCard(), 31);
+//        upcard.keepCard(deck.drawCard(), 1);
     }
 
 //    private void endGame() {

@@ -5,9 +5,11 @@
         <group>
             <file>file:/D:/OOPproject/ProjectGinRummy/src/code/Bot.java</file>
             <file>file:/D:/OOPproject/ProjectGinRummy/src/code/GinRummy.java</file>
+            <file>file:/D:/OOPproject/ProjectGinRummy/src/code/DrawPile.java</file>
             <file>file:/D:/OOPproject/ProjectGinRummy/src/code/Card.java</file>
             <file>file:/D:/OOPproject/ProjectGinRummy/src/code/Deck.java</file>
             <file>file:/D:/OOPproject/ProjectGinRummy/src/code/Player.java</file>
+            <file>file:/D:/OOPproject/ProjectGinRummy/src/code/UpCard.java</file>
         </group>
     </open-files>
 </project-private>

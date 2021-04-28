@@ -5,6 +5,7 @@
  */
 package code;
 
+import java.util.ArrayList;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.collections.ObservableList;
 import javafx.scene.Node;
@@ -13,20 +14,26 @@ import javafx.scene.Node;
  *
  * @author acer
  */
-public class Bot extends Player{
+public class Bot extends Player {
 
-    public Bot(ObservableList<Node> cards) {
+    public Bot(ArrayList<Card> cards) {
         super(cards);
     }
 
     @Override
     public void reset() {
-        super.reset(); 
+        super.reset(); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
-    public void takeCard(Card card) {
-        super.takeCard(card); 
+    public void DropCard(Card card) {
+        super.DropCard(card); //To change body of generated methods, choose Tools | Templates.
     }
-    
+
+//    @Override
+//    public void takeCard(Card card, int count) {
+//        super.takeCard(card, count); //To change body of generated methods, choose Tools | Templates.
+//    }
+
+
 }
