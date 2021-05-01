@@ -137,7 +137,7 @@ public class Player {
                 System.out.println("KIND COUNT ADDED");
             } else {
                 /* No more continue. */
-                
+                System.out.println("NO MORE CONTINUE" + i);
                 /* added 1-5-2021 */
                 if (isContinue == true && arr.size() - 2 == i) {
                     /* case of the last 2 index of the array */
