@@ -20,28 +20,28 @@ public class Bot extends Player {
         super(deadwoodCards, straightCards, kindCards);
     }
 
-    public boolean takeOrPass(UpCard upcard, Bot bot) {
+    public boolean botAction(UpCard upcard) {
         int sameRank = 0;
         int sameSuit = 0;
         boolean isStraight = false;
 
         //check three of kind
-        for (int i = 0; i < bot.getDeadwoodSize(); i++) {
-            if ((upcard.getRank(upcard.getSize() - 1)) == bot.getDeadwoodRank(i)) {
+        for (int i = 0; i < getDeadwoodSize(); i++) {
+            if ((upcard.getRank(upcard.getSize() - 1)) == getDeadwoodRank(i)) {
                 sameRank++;
             }
         }
 
-//        //check straight
-//        for (int i = 0; i < bot.getDeadwoodSize(); i++) {
-//            if ((upcard.getSuit(upcard.getSize() - 1) == bot.getDeadwoodSuit(i))
-//                    && ((bot.getRankValueForCheckKind(i) == upcard.checkStraight(upcard.getSize() - 1) + 1)
-//                    || (bot.getRankValueForCheckKind(i) == upcard.checkStraight(upcard.getSize() - 1) - 1)
-//                    || (bot.getRankValueForCheckKind(i) == upcard.checkStraight(upcard.getSize() - 1) + 2)
-//                    || (bot.getRankValueForCheckKind(i) == upcard.checkStraight(upcard.getSize() - 1) - 2))) {
-//                sameSuit++;
-//            }
-//        }
+        //check straight
+        for (int i = 0; i < getDeadwoodSize(); i++) {
+            if ((upcard.getSuit(upcard.getSize() - 1) == getDeadwoodSuit(i))
+                    && ((getRankValueForCheckKind(getDeadwoodCards(), i) == upcard.checkStraight(upcard.getSize() - 1) + 1)
+                    || (getRankValueForCheckKind(getDeadwoodCards(), i) == upcard.checkStraight(upcard.getSize() - 1) - 1)
+                    || (getRankValueForCheckKind(getDeadwoodCards(), i) == upcard.checkStraight(upcard.getSize() - 1) + 2)
+                    || (getRankValueForCheckKind(getDeadwoodCards(), i) == upcard.checkStraight(upcard.getSize() - 1) - 2))) {
+                sameSuit++;
+            }
+        }
         if (sameSuit >= 2) {
             isStraight = true;
         }
@@ -51,4 +51,10 @@ public class Bot extends Player {
             return false;
         }
     }
+
+    public Node botDropCard() {
+        int index = 0;
+        return getDeadwoodCards().remove(index);
+    }
+
 }

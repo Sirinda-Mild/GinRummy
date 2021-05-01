@@ -15,6 +15,7 @@ import javafx.application.Platform;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
+import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
@@ -26,6 +27,8 @@ import javafx.scene.control.TextField;
 import javafx.scene.effect.Effect;
 import javafx.scene.effect.Glow;
 import javafx.scene.image.Image;
+import javafx.scene.input.MouseButton;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
@@ -46,14 +49,9 @@ public class GinRummy extends Application {
     private UpCard upcard;
     private DrawPile drawpile;
 
-    private SimpleBooleanProperty playable = new SimpleBooleanProperty(false);
+        HBox playerCardsPane = new HBox(10);
     private Glow glow = new Glow();
-    private boolean isPass = false;
-    private boolean isTake = false;
     private boolean firstPass = false;
-    private boolean firstPoint = true;
-    private int playerDW = 0;
-    private int botDW = 0;
 
     private Parent createGame() {
         System.out.println("creatgame laewja");
@@ -82,7 +80,6 @@ public class GinRummy extends Application {
         HBox botStraightCardsPane = new HBox(10);
         HBox botKindCardsPane = new HBox(10);
 
-        HBox playerCardsPane = new HBox(10);
         HBox playerDeadwoodCardsPane = new HBox(10);
         HBox playerStraightCardsPane = new HBox(10);
         HBox playerKindCardsPane = new HBox(10);
@@ -159,13 +156,6 @@ public class GinRummy extends Application {
         rootLayout.getChildren().addAll(new StackPane(BG), new StackPane(vbox));
         root.getChildren().addAll(background, rootLayout);
 
-        // BIND PROPERTIES
-        btnTake.disableProperty().bind(playable.not());
-        btnPass.disableProperty().bind(playable.not());
-        btnNew.disableProperty().bind(playable.not());
-        btnDiscard.disableProperty().bind(playable.not());
-        btnKnock.disableProperty().bind(playable);
-
         // INIT BUTTONS
         btnTake.setOnAction(event -> {
             player.takeDeadwoodCard((Card) upcard.drawCard());
@@ -182,17 +172,13 @@ public class GinRummy extends Application {
         });
 
         btnPass.setOnAction(event -> {
-            botTakeorPass();
-            if (isPass == true) {
+            if (bot.botAction(upcard) == true) {
+                bot.takeDeadwoodCard((Card) upcard.drawCard());
+            } else {
                 root.getChildren().add(passText);
                 buttonBox.getChildren().remove(btnPass);
                 buttonBox.getChildren().add(btnNew);
-                playable.set(true);
-                firstPass = true;
-                isPass = false;
-            }
-            if (isTake == true) {
-                botDropCard();
+                upcard.keepCard((Card) bot.botDropCard());
             }
         });
 
@@ -209,10 +195,10 @@ public class GinRummy extends Application {
             playerDeadwood.textProperty().bind(new SimpleStringProperty("Player Deadwood : ").concat(Integer.toString(player.Deadwood())));
             botScore.textProperty().bind(new SimpleStringProperty("Dealer Score : ").concat(Integer.toString(bot.Deadwood())));
         });
-
         startNewGame();
         player.sortDeadwoodCards();
         bot.sortDeadwoodCards();
+        player.dropCard();
 
         //Score 
         playerScore.textProperty().bind(new SimpleStringProperty("Player Score : ").concat(Integer.toString(player.Score())));
@@ -223,8 +209,6 @@ public class GinRummy extends Application {
     }
 
     private void startNewGame() {
-        playable.set(true);
-
         deck.refill();
 
         bot.reset();
@@ -262,38 +246,6 @@ public class GinRummy extends Application {
         System.out.println(bot.toString());
         System.out.println(drawpile.toString());
         System.out.println(upcard.toString());
-    }
-
-//    private void endRound() {
-//        playable.set(false);
-//
-//        int dealerValue = bot.valueProperty().get();
-//        int playerValue = player.valueProperty().get();
-//        String winner = "Exceptional case: d: " + dealerValue + " p: " + playerValue;
-//
-//        // the order of checking is important
-//        if (dealerValue == 21 || playerValue > 21 || dealerValue == playerValue
-//                || (dealerValue < 21 && dealerValue > playerValue)) {
-//            winner = "DEALER";
-//        } else if (playerValue == 21 || dealerValue > 21 || playerValue > dealerValue) {
-//            winner = "PLAYER";
-//        }
-//
-//        message.setText(winner + " WON");
-//    }
-    private void botTakeorPass() {
-        playable.set(false);
-        if (bot.takeOrPass(upcard, bot) == true) {
-            bot.takeDeadwoodCard((Card) upcard.drawCard());
-            isTake = true;
-        } else {
-            isPass = true;
-        }
-    }
-
-    private void botDropCard() {
-        playable.set(false);
-
     }
 
     @Override
@@ -362,7 +314,7 @@ public class GinRummy extends Application {
             btnExit.setEffect(null);
         });
 
-        primaryStage.setScene(new Scene(root));
+        primaryStage.setScene(new Scene(createGame()));
         primaryStage.setWidth(1000);
         primaryStage.setHeight(600);
         primaryStage.setResizable(false);

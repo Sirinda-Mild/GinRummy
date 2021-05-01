@@ -9,7 +9,10 @@ import java.util.Comparator;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.EventHandler;
 import javafx.scene.Node;
+import javafx.scene.input.MouseButton;
+import javafx.scene.input.MouseEvent;
 
 public class Player {
 
@@ -281,7 +284,7 @@ public class Player {
 
         //CHECK STRAIGHT
         addDeadwoodCardToOwnSuit();
-        
+
         //check straight in club
         if (clubs.size() >= 3) {
             ArrayList< ArrayList<Integer>> clubsStraightInHand = getStraightIndex(addRankToIntArraylistByCompare(deadwoodCards, clubs));
@@ -345,6 +348,19 @@ public class Player {
         }
     }
 
+    public void dropCard() {
+            getDeadwoodNode(0).setOnMousePressed((t) -> {
+                deadwoodCards.remove(0);
+            });
+    }
+
+//    private final EventHandler<MouseEvent> removeHandler = evt -> {
+//        if (evt.getButton() == MouseButton.PRIMARY) {
+//            // remove clicked node as child of pane
+//            deadwoodCards.remove(evt.getTarget());
+//        }
+//    };
+    
     @Override
     public String toString() {
         return deadwoodCards.toString();
