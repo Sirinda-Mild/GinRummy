@@ -19,6 +19,8 @@ public class Player {
     private ObservableList<Node> deadwoodCards;
     private ObservableList<Node> straightCards;
     private ObservableList<Node> kindCards;
+    double orgSceneX, orgSceneY;
+    double orgTranslateX, orgTranslateY;
     ArrayList<Integer> clubs = new ArrayList<>();
     ArrayList<Integer> diamonds = new ArrayList<>();
     ArrayList<Integer> hearts = new ArrayList<>();
@@ -348,11 +350,20 @@ public class Player {
         }
     }
 
-    public void dropCard() {
-            getDeadwoodNode(0).setOnMousePressed((t) -> {
-                deadwoodCards.remove(0);
-            });
-    }
+//    public void dropCard() {
+//        for (int i = 0; i < deadwoodCards.size(); i++) {
+//            final int index = i;
+//            deadwoodCards.get(i).addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
+//                @Override
+//                public void handle(MouseEvent event) {
+//                    final int selectedIndex = index;
+//                    event.consume();
+//                    System.out.println(selectedIndex);
+//                    deadwoodCards.remove(index);
+//                }
+//            });
+//        }
+//    }
 
 //    private final EventHandler<MouseEvent> removeHandler = evt -> {
 //        if (evt.getButton() == MouseButton.PRIMARY) {
@@ -360,7 +371,6 @@ public class Player {
 //            deadwoodCards.remove(evt.getTarget());
 //        }
 //    };
-    
     @Override
     public String toString() {
         return deadwoodCards.toString();

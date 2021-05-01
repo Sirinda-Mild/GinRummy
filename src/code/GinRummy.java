@@ -49,9 +49,10 @@ public class GinRummy extends Application {
     private UpCard upcard;
     private DrawPile drawpile;
 
-        HBox playerCardsPane = new HBox(10);
+    HBox playerCardsPane = new HBox(10);
     private Glow glow = new Glow();
     private boolean firstPass = false;
+    private boolean botTurn = false;
 
     private Parent createGame() {
         System.out.println("creatgame laewja");
@@ -162,6 +163,8 @@ public class GinRummy extends Application {
             if (firstPass == true) {
                 root.getChildren().remove(passText);
             }
+
+            //sort card
             player.sortDeadwoodCards();
             bot.sortDeadwoodCards();
 
@@ -180,13 +183,8 @@ public class GinRummy extends Application {
                 buttonBox.getChildren().add(btnNew);
                 upcard.keepCard((Card) bot.botDropCard());
             }
-        });
 
-        btnNew.setOnAction(event -> {
-            player.takeDeadwoodCard((Card) drawpile.drawCard());
-            if (firstPass == true) {
-                root.getChildren().remove(passText);
-            }
+            //sort card
             player.sortDeadwoodCards();
             bot.sortDeadwoodCards();
 
@@ -195,10 +193,32 @@ public class GinRummy extends Application {
             playerDeadwood.textProperty().bind(new SimpleStringProperty("Player Deadwood : ").concat(Integer.toString(player.Deadwood())));
             botScore.textProperty().bind(new SimpleStringProperty("Dealer Score : ").concat(Integer.toString(bot.Deadwood())));
         });
+
+        btnNew.setOnAction(event -> {
+            player.takeDeadwoodCard((Card) drawpile.drawCard());
+            if (firstPass == true) {
+                root.getChildren().remove(passText);
+            }
+
+            //sort card
+            player.sortDeadwoodCards();
+            bot.sortDeadwoodCards();
+
+            //Score 
+            playerScore.textProperty().bind(new SimpleStringProperty("Player Score : ").concat(Integer.toString(player.Score())));
+            playerDeadwood.textProperty().bind(new SimpleStringProperty("Player Deadwood : ").concat(Integer.toString(player.Deadwood())));
+            botScore.textProperty().bind(new SimpleStringProperty("Dealer Score : ").concat(Integer.toString(bot.Deadwood())));
+        });
+
         startNewGame();
         player.sortDeadwoodCards();
         bot.sortDeadwoodCards();
-        player.dropCard();
+        if (!botTurn) {
+            playerDropCard();
+        }
+        if (botTurn) {
+
+        }
 
         //Score 
         playerScore.textProperty().bind(new SimpleStringProperty("Player Score : ").concat(Integer.toString(player.Score())));
@@ -206,6 +226,23 @@ public class GinRummy extends Application {
         botScore.textProperty().bind(new SimpleStringProperty("Dealer Score : ").concat(Integer.toString(bot.Deadwood())));
 
         return root;
+    }
+
+    public void playerDropCard() {
+        for (int i = 0; i < player.getDeadwoodSize(); i++) {
+            final int index = i;
+            player.getDeadwoodNode(i).addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
+                @Override
+                public void handle(MouseEvent event) {
+                    final int selectedIndex = index;
+                    event.consume();
+                    System.out.println(selectedIndex);
+                    upcard.keepCard((Card) player.getDeadwoodNode(index));
+                    player.getDeadwoodCards().remove(index);
+                    botTurn = true;
+                }
+            });
+        }
     }
 
     private void startNewGame() {
