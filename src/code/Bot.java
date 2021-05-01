@@ -32,16 +32,16 @@ public class Bot extends Player {
             }
         }
 
-        //check straight
-        for (int i = 0; i < bot.getDeadwoodSize(); i++) {
-            if ((upcard.getSuit(upcard.getSize() - 1) == bot.getDeadwoodSuit(i))
-                    && ((bot.getRankValueForCheckKind(i) == upcard.checkStraight(upcard.getSize() - 1) + 1)
-                    || (bot.getRankValueForCheckKind(i) == upcard.checkStraight(upcard.getSize() - 1) - 1)
-                    || (bot.getRankValueForCheckKind(i) == upcard.checkStraight(upcard.getSize() - 1) + 2)
-                    || (bot.getRankValueForCheckKind(i) == upcard.checkStraight(upcard.getSize() - 1) - 2))) {
-                sameSuit++;
-            }
-        }
+//        //check straight
+//        for (int i = 0; i < bot.getDeadwoodSize(); i++) {
+//            if ((upcard.getSuit(upcard.getSize() - 1) == bot.getDeadwoodSuit(i))
+//                    && ((bot.getRankValueForCheckKind(i) == upcard.checkStraight(upcard.getSize() - 1) + 1)
+//                    || (bot.getRankValueForCheckKind(i) == upcard.checkStraight(upcard.getSize() - 1) - 1)
+//                    || (bot.getRankValueForCheckKind(i) == upcard.checkStraight(upcard.getSize() - 1) + 2)
+//                    || (bot.getRankValueForCheckKind(i) == upcard.checkStraight(upcard.getSize() - 1) - 2))) {
+//                sameSuit++;
+//            }
+//        }
         if (sameSuit >= 2) {
             isStraight = true;
         }

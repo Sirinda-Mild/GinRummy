@@ -16,8 +16,10 @@ public class Player {
     private ObservableList<Node> deadwoodCards;
     private ObservableList<Node> straightCards;
     private ObservableList<Node> kindCards;
-//    ArrayList<Integer> deadwoodInHand = new ArrayList<>();
-    ArrayList<ArrayList<Integer>> straightInHand = new ArrayList<ArrayList<Integer>>();
+    ArrayList<Integer> clubs = new ArrayList<>();
+    ArrayList<Integer> diamonds = new ArrayList<>();
+    ArrayList<Integer> hearts = new ArrayList<>();
+    ArrayList<Integer> spades = new ArrayList<>();
     ArrayList<ArrayList<Integer>> kindInHand = new ArrayList<ArrayList<Integer>>();
 
     public Player(ObservableList<Node> deadwoodCards, ObservableList<Node> straightCards, ObservableList<Node> kindCards) {
@@ -88,6 +90,10 @@ public class Player {
         return deadwoodCards.get(index).toString().charAt(0);
     }
 
+    public static char getRank(ObservableList<Node> cards, int index) {
+        return cards.get(index).toString().charAt(0);
+    }
+
     public int getDeadwoodRankValue(int index) {
         int cardValue = 0;
         if (this.getDeadwoodRank(index) == 'm'
@@ -101,18 +107,18 @@ public class Player {
         return cardValue;
     }
 
-    public int getRankValueForCheckKind(int index) {
+    public int getRankValueForCheckKind(ObservableList<Node> cards, int index) {
         int cardValue = 0;
-        if (this.getDeadwoodRank(index) == 'm') {
+        if (getRank(cards, index) == 'm') {
             cardValue = 10;
-        } else if (this.getDeadwoodRank(index) == 'n') {
+        } else if (getRank(cards, index) == 'n') {
             cardValue = 11;
-        } else if (this.getDeadwoodRank(index) == 'o') {
+        } else if (getRank(cards, index) == 'o') {
             cardValue = 12;
-        } else if (this.getDeadwoodRank(index) == 'p') {
+        } else if (getRank(cards, index) == 'p') {
             cardValue = 13;
         } else {
-            cardValue = Character.getNumericValue(this.getDeadwoodRank(index));
+            cardValue = Character.getNumericValue(getRank(cards, index));
         }
         return cardValue;
     }
@@ -200,12 +206,25 @@ public class Player {
         return (result.isEmpty()) ? null : result;
     }
 
-    public ArrayList<Integer> addRankToIntArraylist() {
-        //convert rank card in deadwoodcards to integer
+    public ArrayList<Integer> addRankToIntArraylist(ObservableList<Node> cards) {
+        //convert rank in deadwoodcards to integer
         ArrayList<Integer> cardsList = new ArrayList<>();
-        for (int i = 0; i < deadwoodCards.size(); i++) {
-            cardsList.add(this.getRankValueForCheckKind(i));
+        for (int i = 0; i < cards.size(); i++) {
+            cardsList.add(getRankValueForCheckKind(cards, i));
         }
+        return cardsList;
+    }
+
+    public ArrayList<Integer> addRankToIntArraylistByCompare(ObservableList<Node> cardsRank, ArrayList<Integer> cardsIndex) {
+        System.out.println("kao add jaa");
+        //convert rank in deadwoodcards to integer
+        ArrayList<Integer> cardsList = new ArrayList<>();
+        for (int i = 0; i < cardsIndex.size(); i++) {
+            System.out.println("kao for laew" + i);
+            cardsList.add(getRankValueForCheckKind(cardsRank, cardsIndex.get(i)));
+            System.out.println(cardsList);
+        }
+        System.out.println("return dai jaa");
         return cardsList;
     }
 
@@ -225,12 +244,30 @@ public class Player {
         }
     }
 
+    public void addDeadwoodCardToOwnSuit() {
+        clubs.clear();
+        diamonds.clear();
+        hearts.clear();
+        spades.clear();
+        for (int i = 0; i < deadwoodCards.size(); i++) {
+            if (getDeadwoodSuit(i) == 'c') {
+                clubs.add(i);
+            } else if (getDeadwoodSuit(i) == 'd') {
+                diamonds.add(i);
+            } else if (getDeadwoodSuit(i) == 'h') {
+                hearts.add(i);
+            } else if (getDeadwoodSuit(i) == 's') {
+                spades.add(i);
+            }
+        }
+    }
+
     public void sortDeadwoodCards() {
         //sort card in deadwood card
         sortCards(deadwoodCards);
 
         //CHECK KIND
-        kindInHand = this.getKindIndex(addRankToIntArraylist());
+        kindInHand = getKindIndex(addRankToIntArraylist(deadwoodCards));
 
         if (kindInHand != null) {
             //add card from deadwood to kind observable list
@@ -243,51 +280,68 @@ public class Player {
         }
 
         //CHECK STRAIGHT
-        //keep suit on their own array list
-        ArrayList<Integer> clubs = new ArrayList<>();
-        ArrayList<Integer> diamonds = new ArrayList<>();
-        ArrayList<Integer> hearts = new ArrayList<>();
-        ArrayList<Integer> spades = new ArrayList<>();
-        int straightCount = 0;
-        int deadwoodRe = 0;
-        for (int i = 0; i < deadwoodCards.size(); i++) {
-            if (getDeadwoodSuit(i) == 'c') {
-                clubs.add(i);
-            } else if (getDeadwoodSuit(i) == 'd') {
-                diamonds.add(i);
-            } else if (getDeadwoodSuit(i) == 'h') {
-                hearts.add(i);
-            } else if (getDeadwoodSuit(i) == 's') {
-                spades.add(i);
-            }
-        }
-        System.out.println("clubs");
-        System.out.println(clubs + " : " + clubs.size());
-        System.out.println("diamonds");
-        System.out.println(diamonds + " : " + diamonds.size());
-        System.out.println("hearts");
-        System.out.println(hearts + " : " + hearts.size());
-        System.out.println("spades");
-        System.out.println(spades + " : " + spades.size());
+        addDeadwoodCardToOwnSuit();
+        
+        //check straight in club
         if (clubs.size() >= 3) {
-            ArrayList< ArrayList<Integer>> clubsStraightInHand = this.getStraightIndex(addRankToIntArraylist());
-            System.out.println(clubsStraightInHand);
-        }
-    }
-
-    public void sortStraigthOrKindInHand() {
-        //clone observable list to array list
-        ArrayList<Integer> rankCardsInHand = new ArrayList<>();
-        for (int i = 0; i < this.getDeadwoodSize(); i++) {
-            rankCardsInHand.add(this.getRankValueForCheckKind(i));
-        }
-        //push straight cards to back
-        for (int i = 0, j = kindInHand.size() - 1; j >= 0 && i < this.getDeadwoodSize(); i++) {
-            if (this.getDeadwoodValue(i).equals(kindInHand.get(j))) {
-                this.DeadwoodToBack(i);
-                j--;
-                i = 0;
+            ArrayList< ArrayList<Integer>> clubsStraightInHand = getStraightIndex(addRankToIntArraylistByCompare(deadwoodCards, clubs));
+            if (clubsStraightInHand != null) {
+                //add card from deadwood to kind observable list
+                for (int i = clubsStraightInHand.size() - 1; i >= 0; i--) {
+                    for (int index = clubsStraightInHand.get(i).size() - 1; index >= 0; index--) {
+                        straightCards.add(deadwoodCards.get(clubs.get(clubsStraightInHand.get(i).get(index))));
+                    }
+                }
+                sortCards(straightCards);
             }
+            addDeadwoodCardToOwnSuit();
+        }
+
+        //check straight in diamonds
+        if (diamonds.size() >= 3) {
+            ArrayList< ArrayList<Integer>> diamondsStraightInHand = getStraightIndex(addRankToIntArraylistByCompare(deadwoodCards, diamonds));
+            if (diamondsStraightInHand != null) {
+                //add card from deadwood to kind observable list
+                for (int i = diamondsStraightInHand.size() - 1; i >= 0; i--) {
+                    for (int index = diamondsStraightInHand.get(i).size() - 1; index >= 0; index--) {
+                        straightCards.add(deadwoodCards.get(diamonds.get(diamondsStraightInHand.get(i).get(index))));
+                    }
+                }
+                sortCards(straightCards);
+            }
+            addDeadwoodCardToOwnSuit();
+        }
+
+        //check straight in hearts
+        if (hearts.size() >= 3) {
+            ArrayList< ArrayList<Integer>> heartsStraightInHand = getStraightIndex(addRankToIntArraylistByCompare(deadwoodCards, hearts));
+            if (heartsStraightInHand != null) {
+                //add card from deadwood to kind observable list
+                for (int i = heartsStraightInHand.size() - 1; i >= 0; i--) {
+                    for (int index = heartsStraightInHand.get(i).size() - 1; index >= 0; index--) {
+                        straightCards.add(deadwoodCards.get(hearts.get(heartsStraightInHand.get(i).get(index))));
+                    }
+                }
+                sortCards(straightCards);
+            }
+            addDeadwoodCardToOwnSuit();
+        }
+
+        //check straight in spades
+        if (spades.size() >= 3) {
+            System.out.println("deadwood cards : " + deadwoodCards);
+            System.out.println("straight cards : " + straightCards);
+            ArrayList< ArrayList<Integer>> spadesStraightInHand = getStraightIndex(addRankToIntArraylistByCompare(deadwoodCards, spades));
+            if (spadesStraightInHand != null) {
+                //add card from deadwood to kind observable list
+                for (int i = spadesStraightInHand.size() - 1; i >= 0; i--) {
+                    for (int index = spadesStraightInHand.get(i).size() - 1; index >= 0; index--) {
+                        straightCards.add(deadwoodCards.get(spades.get(spadesStraightInHand.get(i).get(index))));
+                    }
+                }
+                sortCards(straightCards);
+            }
+            addDeadwoodCardToOwnSuit();
         }
     }
 
