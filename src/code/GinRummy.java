@@ -176,14 +176,24 @@ public class GinRummy extends Application {
         });
 
         btnPass.setOnAction(event -> {
-            if (bot.botAction(upcard) == true) {
+            if (bot.botAction(upcard) == 0) {
                 bot.takeDeadwoodCard((Card) upcard.drawCard());
+                bot.sortDeadwoodCards();
+                upcard.keepCard((Card) bot.botDropCard());
+            } else if (bot.botAction(upcard) == 1) {
+                bot.takeKindCard((Card) upcard.drawCard());
+                bot.sortDeadwoodCards();
+                upcard.keepCard((Card) bot.botDropCard());
+            } else if (bot.botAction(upcard) == 2) {
+                bot.takeStraightCard((Card) upcard.drawCard());
+                bot.sortDeadwoodCards();
+                upcard.keepCard((Card) bot.botDropCard());
             } else {
                 root.getChildren().add(passText);
-                buttonBox.getChildren().remove(btnPass);
-                buttonBox.getChildren().add(btnNew);
-                upcard.keepCard((Card) bot.botDropCard());
             }
+            //change button pass to new
+            buttonBox.getChildren().remove(btnPass);
+            buttonBox.getChildren().add(btnNew);
 
             //sort card
             player.sortDeadwoodCards();
@@ -245,32 +255,30 @@ public class GinRummy extends Application {
         bot.reset();
         player.reset();
 
-//        player.takeDeadwoodCard(new Card("h", "3"));
-//        player.takeDeadwoodCard(new Card("d", "3"));
-//        player.takeDeadwoodCard(new Card("h", "4"));
-//        player.takeDeadwoodCard(new Card("s", "5"));
-//        player.takeDeadwoodCard(new Card("h", "5"));
-//        player.takeDeadwoodCard(new Card("h", "n"));
-//        player.takeDeadwoodCard(new Card("c", "3"));
-//        player.takeDeadwoodCard(new Card("h", "n"));
-//        player.takeDeadwoodCard(new Card("h", "o"));
-//        player.takeDeadwoodCard(new Card("h", "p"));
-//        player.takeDeadwoodCard(new Card("d", "5"));
-        System.out.println("deadwood : " + player.getDeadwoodCards());
-        System.out.println("kind : " + player.getKindCards());
-        System.out.println("straight : " + player.getStraightCards());
+        bot.takeDeadwoodCard(new Card("h", "3"));
+        bot.takeDeadwoodCard(new Card("s", "3"));
+        bot.takeDeadwoodCard(new Card("h", "4"));
+        bot.takeDeadwoodCard(new Card("s", "7"));
+        bot.takeDeadwoodCard(new Card("h", "5"));
+        bot.takeDeadwoodCard(new Card("h", "n"));
+        bot.takeDeadwoodCard(new Card("c", "8"));
+        bot.takeDeadwoodCard(new Card("s", "4"));
+        bot.takeDeadwoodCard(new Card("s", "5"));
+        bot.takeDeadwoodCard(new Card("h", "p"));
         //player and bot draw card
         for (int i = 0; i < 10; i++) {
             player.takeDeadwoodCard(deck.drawCard());
-            bot.takeDeadwoodCard(deck.drawCard());
+//            bot.takeDeadwoodCard(deck.drawCard());
         }
 
         //deck keep card
         for (int i = 0; i < 31; i++) {
             drawpile.keepCard(deck.drawCard());
         }
+
         //open top card
-        upcard.keepCard(deck.drawCard());
+//        upcard.keepCard(deck.drawCard());
+        upcard.keepCard(new Card("h", "6"));
 
         //print test
         System.out.println(player.toString());

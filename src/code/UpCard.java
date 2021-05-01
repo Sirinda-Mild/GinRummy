@@ -54,15 +54,15 @@ public class UpCard {
         return cards.size();
     }
 
-    public int checkStraight(int index) {
+    public int getRankValueForCheckKind(int index) {
         int cardValue = 0;
-        if (cards.get(index).toString().charAt(0) == '0') {
+        if (cards.get(index).toString().charAt(0) == 'm') {
             cardValue = 10;
-        } else if (cards.get(index).toString().charAt(0) == 'j') {
+        } else if (cards.get(index).toString().charAt(0) == 'n') {
             cardValue = 11;
-        } else if (cards.get(index).toString().charAt(0) == 'q') {
+        } else if (cards.get(index).toString().charAt(0) == 'o') {
             cardValue = 12;
-        } else if (cards.get(index).toString().charAt(0) == 'k') {
+        } else if (cards.get(index).toString().charAt(0) == 'p') {
             cardValue = 13;
         } else {
             cardValue = Character.getNumericValue(cards.get(index).toString().charAt(0));
@@ -70,10 +70,10 @@ public class UpCard {
         return cardValue;
     }
 
-//    public void reset() {
-//        cards.clear();
-//        value.set(0);
-//    }
+    public void reset() {
+        cards.clear();
+    }
+    
     @Override
     public String toString() {
         return cards.toString();
