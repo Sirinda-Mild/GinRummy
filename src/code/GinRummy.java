@@ -78,14 +78,14 @@ public class GinRummy extends Application {
 
         //set final pane
         HBox botCardsPane = new HBox(10);
-        HBox playerCardsPane = new HBox(10);
+        HBox playerDeadwoodCardsPane = new HBox(10);
         HBox drawCardsPane = new HBox(10);
         StackPane upCardPilePane = new StackPane();
         StackPane drawPilePane = new StackPane();
-        playerCardsPane.setPadding(new Insets(5, 5, 5, 5));
+        playerDeadwoodCardsPane.setPadding(new Insets(5, 5, 5, 5));
         botCardsPane.setPadding(new Insets(5, 5, 5, 5));
 
-        playerCardsPane.setAlignment(Pos.CENTER);
+        playerDeadwoodCardsPane.setAlignment(Pos.CENTER);
         botCardsPane.setAlignment(Pos.CENTER);
         upCardPilePane.setAlignment(Pos.CENTER);
         drawPilePane.setAlignment(Pos.CENTER);
@@ -94,7 +94,7 @@ public class GinRummy extends Application {
         drawCardsPane.getChildren().addAll(drawPilePane, upCardPilePane);
 
         //declare arraylist
-        player = new Player(playerCardsPane.getChildren());
+        player = new Player(playerDeadwoodCardsPane.getChildren());
         bot = new Bot(botCardsPane.getChildren());
         upcard = new UpCard(upCardPilePane.getChildren());
         drawpile = new DrawPile(drawPilePane.getChildren());
@@ -135,7 +135,7 @@ public class GinRummy extends Application {
         // ADD STACKS TO ROOT LAYOUT
         buttonBox.getChildren().addAll(btnTake, btnPass);
         buttonBox.setAlignment(Pos.CENTER_RIGHT);
-        vbox.getChildren().addAll(botCardsPane, botScore, drawCardsPane, buttonBox, playerInfo, playerCardsPane);
+        vbox.getChildren().addAll(botCardsPane, botScore, drawCardsPane, buttonBox, playerInfo, playerDeadwoodCardsPane);
         rootLayout.getChildren().addAll(new StackPane(BG), new StackPane(vbox));
         root.getChildren().addAll(background, rootLayout);
 
@@ -184,7 +184,7 @@ public class GinRummy extends Application {
         playerDW = player.Deadwood();
         botDW = bot.Deadwood();
         player.sortCards();
-//        bot.sortCards();
+        bot.sortCards();
         //Score 
         playerScore.textProperty().bind(new SimpleStringProperty("Player Score : ").concat(Integer.toString(player.Score())));
         playerDeadwood.textProperty().bind(new SimpleStringProperty("Player Deadwood : ").concat(Integer.toString(playerDW)));

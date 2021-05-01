@@ -16,8 +16,8 @@ import javafx.scene.Node;
  */
 public class Bot extends Player {
 
-    public Bot(ObservableList<Node> cards) {
-        super(cards);
+    public Bot(ObservableList<Node> deadwoodCards, ObservableList<Node> straightCards, ObservableList<Node> kindCards) {
+        super(deadwoodCards, straightCards, kindCards);
     }
 
     public boolean takeOrPass(UpCard upcard, Bot bot) {
@@ -26,15 +26,15 @@ public class Bot extends Player {
         boolean isStraight = false;
 
         //check three of kind
-        for (int i = 0; i < bot.getSize(); i++) {
-            if ((upcard.getRank(upcard.getSize() - 1)) == bot.getRank(i)) {
+        for (int i = 0; i < bot.getDeadwoodSize(); i++) {
+            if ((upcard.getRank(upcard.getSize() - 1)) == bot.getDeadwoodRank(i)) {
                 sameRank++;
             }
         }
 
         //check straight
-        for (int i = 0; i < bot.getSize(); i++) {
-            if ((upcard.getSuit(upcard.getSize() - 1) == bot.getSuit(i))
+        for (int i = 0; i < bot.getDeadwoodSize(); i++) {
+            if ((upcard.getSuit(upcard.getSize() - 1) == bot.getDeadwoodSuit(i))
                     && ((bot.getRankValueForCheckKind(i) == upcard.checkStraight(upcard.getSize() - 1) + 1)
                     || (bot.getRankValueForCheckKind(i) == upcard.checkStraight(upcard.getSize() - 1) - 1)
                     || (bot.getRankValueForCheckKind(i) == upcard.checkStraight(upcard.getSize() - 1) + 2)

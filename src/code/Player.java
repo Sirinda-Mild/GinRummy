@@ -13,49 +13,49 @@ import javafx.scene.Node;
 
 public class Player {
 
-    private ObservableList<Node> cards;
+    private ObservableList<Node> deadwoodCards;
+    private ObservableList<Node> straightCards;
+    private ObservableList<Node> kindCards;
     ArrayList<String> deadwoodInHand = new ArrayList<>();
     ArrayList<String> straightInHand = new ArrayList<>();
     ArrayList<String> kindInHand = new ArrayList<>();
 
-    public Player(ObservableList<Node> deadwoodCards) {
-        this.cards = deadwoodCards;
+    public Player(ObservableList<Node> deadwoodCards, ObservableList<Node> straightCards, ObservableList<Node> kindCards) {
+        this.deadwoodCards = deadwoodCards;
+        this.straightCards = straightCards;
+        this.kindCards = kindCards;
     }
 
     public ObservableList<Node> getCards() {
-        return cards;
-    }
-
-    public void setCards(ObservableList<Node> cards) {
-        this.cards = cards;
+        return deadwoodCards;
     }
 
     public void takeCard(Card card) {
-        cards.add(card);
+        deadwoodCards.add(card);
     }
 
     public void toBack(int index) {
-        cards.get(index).toBack();
+        deadwoodCards.get(index).toBack();
     }
 
     public Node getNode(int index) {
-        return cards.get(index);
+        return deadwoodCards.get(index);
     }
 
-    public Node DropCard(int index) {
-        Node card = cards.get(index);
-        cards.remove(index);
+    public Node DropDeadwoodCard(int index) {
+        Node card = deadwoodCards.get(index);
+        deadwoodCards.remove(index);
         return card;
     }
 
     public void reset() {
-        cards.clear();
+        deadwoodCards.clear();
     }
 
     public int Deadwood() {
         int deadwood = 0;
         for (int index = 0; index < deadwoodInHand.size(); index++) {
-            deadwood += this.getRankValue(index);
+            deadwood += this.getDeadwoodRankValue(index);
         }
         System.out.println(deadwood);
         return deadwood;
@@ -66,49 +66,49 @@ public class Player {
         return score;
     }
 
-    public int getSize() {
-        return cards.size();
+    public int getDeadwoodSize() {
+        return deadwoodCards.size();
     }
 
-    public char getSuit(int index) {
-        return cards.get(index).toString().charAt(1);
+    public char getDeadwoodSuit(int index) {
+        return deadwoodCards.get(index).toString().charAt(1);
     }
 
-    public char getRank(int index) {
-        return cards.get(index).toString().charAt(0);
+    public char getDeadwoodRank(int index) {
+        return deadwoodCards.get(index).toString().charAt(0);
     }
 
-    public int getRankValue(int index) {
+    public int getDeadwoodRankValue(int index) {
         int cardValue = 0;
-        if (this.getRank(index) == 'm'
-                || this.getRank(index) == 'n'
-                || this.getRank(index) == 'o'
-                || this.getRank(index) == 'p') {
+        if (this.getDeadwoodRank(index) == 'm'
+                || this.getDeadwoodRank(index) == 'n'
+                || this.getDeadwoodRank(index) == 'o'
+                || this.getDeadwoodRank(index) == 'p') {
             cardValue = 10;
         } else {
-            cardValue = Character.getNumericValue(this.getRank(index));
+            cardValue = Character.getNumericValue(this.getDeadwoodRank(index));
         }
         return cardValue;
     }
 
     public int getRankValueForCheckKind(int index) {
         int cardValue = 0;
-        if (this.getRank(index) == 'm') {
+        if (this.getDeadwoodRank(index) == 'm') {
             cardValue = 10;
-        } else if (this.getRank(index) == 'n') {
+        } else if (this.getDeadwoodRank(index) == 'n') {
             cardValue = 11;
-        } else if (this.getRank(index) == 'o') {
+        } else if (this.getDeadwoodRank(index) == 'o') {
             cardValue = 12;
-        } else if (this.getRank(index) == 'p') {
+        } else if (this.getDeadwoodRank(index) == 'p') {
             cardValue = 13;
         } else {
-            cardValue = Character.getNumericValue(this.getRank(index));
+            cardValue = Character.getNumericValue(this.getDeadwoodRank(index));
         }
         return cardValue;
     }
 
-    public String getValue(int index) {
-        String card = cards.get(index).toString();
+    public String getDeadwoodValue(int index) {
+        String card = deadwoodCards.get(index).toString();
         return card;
     }
 
@@ -272,21 +272,21 @@ public class Player {
     public void sortCards() {
         //sort card from rank
         ArrayList<String> cardSorted = new ArrayList<>();
-        for (int i = 0; i < this.getSize(); i++) {
-            cardSorted.add(this.getValue(i));
+        for (int i = 0; i < this.getDeadwoodSize(); i++) {
+            cardSorted.add(this.getDeadwoodValue(i));
         }
         Collections.sort(cardSorted);
-        for (int i = 0, j = cardSorted.size() - 1; j >= 0 && i < this.getSize(); i++) {
-            if (this.getValue(i).equals(cardSorted.get(j))) {
+        for (int i = 0, j = cardSorted.size() - 1; j >= 0 && i < this.getDeadwoodSize(); i++) {
+            if (this.getDeadwoodValue(i).equals(cardSorted.get(j))) {
                 this.toBack(i);
                 j--;
                 i = 0;
             }
         }
-        
+
         //convert rank card in hand to integer
         ArrayList<Integer> rankCardsInHand = new ArrayList<>();
-        for (int i = 0; i < this.getSize(); i++) {
+        for (int i = 0; i < this.getDeadwoodSize(); i++) {
             rankCardsInHand.add(this.getRankValueForCheckKind(i));
         }
         System.out.println(rankCardsInHand);
@@ -300,7 +300,7 @@ public class Player {
                 System.out.println("kind chud" + i);
                 for (int k = 0; k < kindIndex.get(i).size(); k++) {
                     System.out.println(kindIndex.get(i).get(k));
-                    kindInHand.add(this.getValue(kindIndex.get(i).get(k)));
+                    kindInHand.add(this.getDeadwoodValue(kindIndex.get(i).get(k)));
                 }
             }
         }
@@ -310,12 +310,12 @@ public class Player {
     public void sortStraigthOrKindInHand() {
         //clone observable list to array list
         ArrayList<Integer> rankCardsInHand = new ArrayList<>();
-        for (int i = 0; i < this.getSize(); i++) {
+        for (int i = 0; i < this.getDeadwoodSize(); i++) {
             rankCardsInHand.add(this.getRankValueForCheckKind(i));
         }
         //push straight cards to back
-        for (int i = 0, j = kindInHand.size() - 1; j >= 0 && i < this.getSize(); i++) {
-            if (this.getValue(i).equals(kindInHand.get(j))) {
+        for (int i = 0, j = kindInHand.size() - 1; j >= 0 && i < this.getDeadwoodSize(); i++) {
+            if (this.getDeadwoodValue(i).equals(kindInHand.get(j))) {
                 this.toBack(i);
                 j--;
                 i = 0;
@@ -325,7 +325,7 @@ public class Player {
 
     @Override
     public String toString() {
-        return cards.toString();
+        return deadwoodCards.toString();
     }
 
 }
