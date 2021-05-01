@@ -181,20 +181,17 @@ public class GinRummy extends Application {
         });
 
         startNewGame();
-        if (firstPoint == true) {
-            playerDW = player.Deadwood();
-            botDW = bot.Deadwood();
-            player.sortCards();
-            bot.sortCards();
-            firstPoint = false;
-        }
+        playerDW = player.Deadwood();
+        botDW = bot.Deadwood();
+        player.sortCards();
+//        bot.sortCards();
         //Score 
         playerScore.textProperty().bind(new SimpleStringProperty("Player Score : ").concat(Integer.toString(player.Score())));
         playerDeadwood.textProperty().bind(new SimpleStringProperty("Player Deadwood : ").concat(Integer.toString(playerDW)));
         botScore.textProperty().bind(new SimpleStringProperty("Dealer Score : ").concat(Integer.toString(botDW)));
 
-        checkPlayerStraight();
-        checkBotStraight();
+//        checkPlayerStraight();
+//        checkBotStraight();
 
         return root;
     }
@@ -207,9 +204,16 @@ public class GinRummy extends Application {
         bot.reset();
         player.reset();
 
+            player.takeCard(new Card("c","5"));
+            player.takeCard(new Card("h","7"));
+            player.takeCard(new Card("s","6"));
+            player.takeCard(new Card("c","2"));
+            player.takeCard(new Card("s","5"));
+            player.takeCard(new Card("d","5"));
+            player.takeCard(new Card("h","2"));
         //player and bot draw card
         for (int i = 0; i < 10; i++) {
-            player.takeCard(deck.drawCard());
+//            player.takeCard(deck.drawCard());
             bot.takeCard(deck.drawCard());
         }
 
@@ -245,7 +249,6 @@ public class GinRummy extends Application {
 //
 //        message.setText(winner + " WON");
 //    }
-    
     private void botTakeorPass() {
         playable.set(false);
         if (bot.takeOrPass(upcard, bot) == true) {
@@ -256,249 +259,249 @@ public class GinRummy extends Application {
         }
     }
 
-    private void checkPlayerStraight() {
-        ArrayList<String> clubs = new ArrayList<>();
-        ArrayList<String> diamonds = new ArrayList<>();
-        ArrayList<String> hearts = new ArrayList<>();
-        ArrayList<String> spades = new ArrayList<>();
-        int straightCount = 0;
-        int deadwoodRe = 0;
-        for (int i = 0; i < player.getSize(); i++) {
-            if (player.getSuit(i) == 'c') {
-                clubs.add(Integer.toString(i));
-            } else if (player.getSuit(i) == 'd') {
-                diamonds.add(Integer.toString(i));
-            } else if (player.getSuit(i) == 'h') {
-                hearts.add(Integer.toString(i));
-            } else if (player.getSuit(i) == 's') {
-                spades.add(Integer.toString(i));
-            }
-        }
-        System.out.println("clubs");
-        System.out.println(clubs);
-        System.out.println("clubs size " + clubs.size());
-        straightCount = 0;
-        deadwoodRe = 0;
-        if (clubs.size() >= 3) {
-            for (int i = 0, j = i + 1; j < clubs.size(); i++, j++) {
-                if ((player.getRankValue(Integer.parseInt(clubs.get(i))) + 1) == player.getRankValue(Integer.parseInt(clubs.get(j)))) {
-                    straightCount++;
-                }
-            }
-            System.out.println("count " + straightCount);
-            if (straightCount >= 2) {
-                System.out.println("straight jaa");
-                for (int i = 0, j = clubs.size() - 1; j >= 0 && i < player.getSize(); i++) {
-                    if (player.getValue(i).equals(clubs.get(j))) {
-                        player.toBack(i);
-                        j--;
-                        i = 0;
-                    }
-                }
-                for (int index = 0; index < clubs.size(); index++) {
-                    deadwoodRe += player.getRankValue(Integer.parseInt(clubs.get(index)));
-                }
-                playerDW -= deadwoodRe;
-            }
-        }
-
-        System.out.println("diamond");
-        System.out.println(diamonds);
-        System.out.println("diamonds size " + diamonds.size());
-        straightCount = 0;
-        deadwoodRe = 0;
-        if (diamonds.size() >= 3) {
-            for (int i = 0, j = i + 1; j < diamonds.size(); i++, j++) {
-                if ((player.getRankValue(Integer.parseInt(diamonds.get(i))) + 1) == player.getRankValue(Integer.parseInt(diamonds.get(j)))) {
-                    straightCount++;
-                }
-            }
-
-            System.out.println("count " + straightCount);
-            if (straightCount >= 2) {
-                System.out.println("straight jaa");
-                for (int i = 0, j = diamonds.size() - 1; j >= 0 && i < player.getSize(); i++) {
-                    if (player.getValue(i).equals(diamonds.get(j))) {
-                        player.toBack(i);
-                        j--;
-                        i = 0;
-                    }
-                }
-                for (int index = 0; index < diamonds.size(); index++) {
-                    deadwoodRe += player.getRankValue(Integer.parseInt(diamonds.get(index)));
-                }
-                playerDW -= deadwoodRe;
-            }
-        }
-        System.out.println("heart");
-        System.out.println(hearts);
-        System.out.println("hearts size " + hearts.size());
-        straightCount = 0;
-        deadwoodRe = 0;
-        if (hearts.size() >= 3) {
-            for (int i = 0, j = i + 1; j < hearts.size(); i++, j++) {
-                if ((player.getRankValue(Integer.parseInt(hearts.get(i))) + 1) == player.getRankValue(Integer.parseInt(hearts.get(j)))) {
-                    straightCount++;
-                }
-            }
-
-            System.out.println("count " + straightCount);
-            if (straightCount >= 2) {
-                System.out.println("straight jaa");
-                for (int i = 0, j = hearts.size() - 1; j >= 0 && i < player.getSize(); i++) {
-                    if (player.getValue(i).equals(hearts.get(j))) {
-                        player.toBack(i);
-                        j--;
-                        i = 0;
-                    }
-                }
-                for (int index = 0; index < hearts.size(); index++) {
-                    deadwoodRe += player.getRankValue(Integer.parseInt(hearts.get(index)));
-                }
-                playerDW -= deadwoodRe;
-            }
-        }
-        System.out.println("spades");
-        System.out.println(spades);
-        System.out.println("spades size " + spades.size());
-        straightCount = 0;
-        deadwoodRe = 0;
-        if (spades.size() >= 3) {
-            for (int i = 0, j = i + 1; j < spades.size(); i++, j++) {
-                if ((player.getRankValue(Integer.parseInt(spades.get(i))) + 1) == player.getRankValue(Integer.parseInt(spades.get(j)))) {
-                    straightCount++;
-                }
-            }
-
-            System.out.println("count " + straightCount);
-            if (straightCount >= 2) {
-                System.out.println("straight jaa");
-                for (int i = 0, j = spades.size() - 1; j >= 0 && i < player.getSize(); i++) {
-                    if (player.getValue(i).equals(spades.get(j))) {
-                        player.toBack(i);
-                        j--;
-                        i = 0;
-                    }
-                }
-                for (int index = 0; index < spades.size(); index++) {
-                    deadwoodRe += player.getRankValue(Integer.parseInt(spades.get(index)));
-                }
-                playerDW -= deadwoodRe;
-            }
-        }
-    }
-
-    private void checkBotStraight() {
-        ArrayList<String> clubs = new ArrayList<>();
-        ArrayList<String> diamonds = new ArrayList<>();
-        ArrayList<String> hearts = new ArrayList<>();
-        ArrayList<String> spades = new ArrayList<>();
-        int straightCount = 0;
-        int deadwoodRe = 0;
-        for (int i = 0; i < bot.getSize(); i++) {
-            if (bot.getSuit(i) == 'c') {
-                clubs.add(Integer.toString(i));
-            } else if (bot.getSuit(i) == 'd') {
-                diamonds.add(Integer.toString(i));
-            } else if (bot.getSuit(i) == 'h') {
-                hearts.add(Integer.toString(i));
-            } else if (bot.getSuit(i) == 's') {
-                spades.add(Integer.toString(i));
-            }
-        }
-
-        straightCount = 0;
-        deadwoodRe = 0;
-        if (clubs.size() >= 3) {
-            for (int i = 0, j = i + 1; j < clubs.size(); i++, j++) {
-                if ((bot.getRankValue(Integer.parseInt(clubs.get(i))) + 1) == bot.getRankValue(Integer.parseInt(clubs.get(j)))) {
-                    straightCount++;
-                }
-            }
-            if (straightCount >= 2) {
-                for (int i = 0, j = clubs.size() - 1; j >= 0 && i < bot.getSize(); i++) {
-                    if (bot.getValue(i).equals(clubs.get(j))) {
-                        bot.toBack(i);
-                        j--;
-                        i = 0;
-                    }
-                }
-                for (int index = 0; index < clubs.size(); index++) {
-                    deadwoodRe += bot.getRankValue(Integer.parseInt(clubs.get(index)));
-                }
-                botDW -= deadwoodRe;
-            }
-        }
-
-        straightCount = 0;
-        deadwoodRe = 0;
-        if (diamonds.size() >= 3) {
-            for (int i = 0, j = i + 1; j < diamonds.size(); i++, j++) {
-                if ((bot.getRankValue(Integer.parseInt(diamonds.get(i))) + 1) == bot.getRankValue(Integer.parseInt(diamonds.get(j)))) {
-                    straightCount++;
-                }
-            }
-            if (straightCount >= 2) {
-                for (int i = 0, j = diamonds.size() - 1; j >= 0 && i < bot.getSize(); i++) {
-                    if (bot.getValue(i).equals(diamonds.get(j))) {
-                        bot.toBack(i);
-                        j--;
-                        i = 0;
-                    }
-                }
-                for (int index = 0; index < diamonds.size(); index++) {
-                    deadwoodRe += bot.getRankValue(Integer.parseInt(diamonds.get(index)));
-                }
-                botDW -= deadwoodRe;
-            }
-        }
-
-        straightCount = 0;
-        deadwoodRe = 0;
-        if (hearts.size() >= 3) {
-            for (int i = 0, j = i + 1; j < hearts.size(); i++, j++) {
-                if ((bot.getRankValue(Integer.parseInt(hearts.get(i))) + 1) == bot.getRankValue(Integer.parseInt(hearts.get(j)))) {
-                    straightCount++;
-                }
-            }
-            if (straightCount >= 2) {
-                for (int i = 0, j = hearts.size() - 1; j >= 0 && i < bot.getSize(); i++) {
-                    if (bot.getValue(i).equals(hearts.get(j))) {
-                        bot.toBack(i);
-                        j--;
-                        i = 0;
-                    }
-                }
-                for (int index = 0; index < hearts.size(); index++) {
-                    deadwoodRe += bot.getRankValue(Integer.parseInt(hearts.get(index)));
-                }
-                botDW -= deadwoodRe;
-            }
-        }
-
-        straightCount = 0;
-        deadwoodRe = 0;
-        if (spades.size() >= 3) {
-            for (int i = 0, j = i + 1; j < spades.size(); i++, j++) {
-                if ((bot.getRankValue(Integer.parseInt(spades.get(i))) + 1) == bot.getRankValue(Integer.parseInt(spades.get(j)))) {
-                    straightCount++;
-                }
-            }
-            if (straightCount >= 2) {
-                for (int i = 0, j = spades.size() - 1; j >= 0 && i < bot.getSize(); i++) {
-                    if (bot.getValue(i).equals(spades.get(j))) {
-                        bot.toBack(i);
-                        j--;
-                        i = 0;
-                    }
-                }
-                for (int index = 0; index < spades.size(); index++) {
-                    deadwoodRe += bot.getRankValue(Integer.parseInt(spades.get(index)));
-                }
-                botDW -= deadwoodRe;
-            }
-        }
-    }
+//    private void checkPlayerStraight() {
+//        ArrayList<String> clubs = new ArrayList<>();
+//        ArrayList<String> diamonds = new ArrayList<>();
+//        ArrayList<String> hearts = new ArrayList<>();
+//        ArrayList<String> spades = new ArrayList<>();
+//        int straightCount = 0;
+//        int deadwoodRe = 0;
+//        for (int i = 0; i < player.getSize(); i++) {
+//            if (player.getSuit(i) == 'c') {
+//                clubs.add(Integer.toString(i));
+//            } else if (player.getSuit(i) == 'd') {
+//                diamonds.add(Integer.toString(i));
+//            } else if (player.getSuit(i) == 'h') {
+//                hearts.add(Integer.toString(i));
+//            } else if (player.getSuit(i) == 's') {
+//                spades.add(Integer.toString(i));
+//            }
+//        }
+//        System.out.println("clubs");
+//        System.out.println(clubs);
+//        System.out.println("clubs size " + clubs.size());
+//        straightCount = 0;
+//        deadwoodRe = 0;
+//        if (clubs.size() >= 3) {
+//            for (int i = 0, j = i + 1; j < clubs.size(); i++, j++) {
+//                if ((player.getRankValue(Integer.parseInt(clubs.get(i))) + 1) == player.getRankValue(Integer.parseInt(clubs.get(j)))) {
+//                    straightCount++;
+//                }
+//            }
+//            System.out.println("count " + straightCount);
+//            if (straightCount >= 2) {
+//                System.out.println("straight jaa");
+//                for (int i = 0, j = clubs.size() - 1; j >= 0 && i < player.getSize(); i++) {
+//                    if (player.getValue(i).equals(clubs.get(j))) {
+//                        player.toBack(i);
+//                        j--;
+//                        i = 0;
+//                    }
+//                }
+//                for (int index = 0; index < clubs.size(); index++) {
+//                    deadwoodRe += player.getRankValue(Integer.parseInt(clubs.get(index)));
+//                }
+//                playerDW -= deadwoodRe;
+//            }
+//        }
+//
+//        System.out.println("diamond");
+//        System.out.println(diamonds);
+//        System.out.println("diamonds size " + diamonds.size());
+//        straightCount = 0;
+//        deadwoodRe = 0;
+//        if (diamonds.size() >= 3) {
+//            for (int i = 0, j = i + 1; j < diamonds.size(); i++, j++) {
+//                if ((player.getRankValue(Integer.parseInt(diamonds.get(i))) + 1) == player.getRankValue(Integer.parseInt(diamonds.get(j)))) {
+//                    straightCount++;
+//                }
+//            }
+//
+//            System.out.println("count " + straightCount);
+//            if (straightCount >= 2) {
+//                System.out.println("straight jaa");
+//                for (int i = 0, j = diamonds.size() - 1; j >= 0 && i < player.getSize(); i++) {
+//                    if (player.getValue(i).equals(diamonds.get(j))) {
+//                        player.toBack(i);
+//                        j--;
+//                        i = 0;
+//                    }
+//                }
+//                for (int index = 0; index < diamonds.size(); index++) {
+//                    deadwoodRe += player.getRankValue(Integer.parseInt(diamonds.get(index)));
+//                }
+//                playerDW -= deadwoodRe;
+//            }
+//        }
+//        System.out.println("heart");
+//        System.out.println(hearts);
+//        System.out.println("hearts size " + hearts.size());
+//        straightCount = 0;
+//        deadwoodRe = 0;
+//        if (hearts.size() >= 3) {
+//            for (int i = 0, j = i + 1; j < hearts.size(); i++, j++) {
+//                if ((player.getRankValue(Integer.parseInt(hearts.get(i))) + 1) == player.getRankValue(Integer.parseInt(hearts.get(j)))) {
+//                    straightCount++;
+//                }
+//            }
+//
+//            System.out.println("count " + straightCount);
+//            if (straightCount >= 2) {
+//                System.out.println("straight jaa");
+//                for (int i = 0, j = hearts.size() - 1; j >= 0 && i < player.getSize(); i++) {
+//                    if (player.getValue(i).equals(hearts.get(j))) {
+//                        player.toBack(i);
+//                        j--;
+//                        i = 0;
+//                    }
+//                }
+//                for (int index = 0; index < hearts.size(); index++) {
+//                    deadwoodRe += player.getRankValue(Integer.parseInt(hearts.get(index)));
+//                }
+//                playerDW -= deadwoodRe;
+//            }
+//        }
+//        System.out.println("spades");
+//        System.out.println(spades);
+//        System.out.println("spades size " + spades.size());
+//        straightCount = 0;
+//        deadwoodRe = 0;
+//        if (spades.size() >= 3) {
+//            for (int i = 0, j = i + 1; j < spades.size(); i++, j++) {
+//                if ((player.getRankValue(Integer.parseInt(spades.get(i))) + 1) == player.getRankValue(Integer.parseInt(spades.get(j)))) {
+//                    straightCount++;
+//                }
+//            }
+//
+//            System.out.println("count " + straightCount);
+//            if (straightCount >= 2) {
+//                System.out.println("straight jaa");
+//                for (int i = 0, j = spades.size() - 1; j >= 0 && i < player.getSize(); i++) {
+//                    if (player.getValue(i).equals(spades.get(j))) {
+//                        player.toBack(i);
+//                        j--;
+//                        i = 0;
+//                    }
+//                }
+//                for (int index = 0; index < spades.size(); index++) {
+//                    deadwoodRe += player.getRankValue(Integer.parseInt(spades.get(index)));
+//                }
+//                playerDW -= deadwoodRe;
+//            }
+//        }
+//    }
+//
+//    private void checkBotStraight() {
+//        ArrayList<String> clubs = new ArrayList<>();
+//        ArrayList<String> diamonds = new ArrayList<>();
+//        ArrayList<String> hearts = new ArrayList<>();
+//        ArrayList<String> spades = new ArrayList<>();
+//        int straightCount = 0;
+//        int deadwoodRe = 0;
+//        for (int i = 0; i < bot.getSize(); i++) {
+//            if (bot.getSuit(i) == 'c') {
+//                clubs.add(Integer.toString(i));
+//            } else if (bot.getSuit(i) == 'd') {
+//                diamonds.add(Integer.toString(i));
+//            } else if (bot.getSuit(i) == 'h') {
+//                hearts.add(Integer.toString(i));
+//            } else if (bot.getSuit(i) == 's') {
+//                spades.add(Integer.toString(i));
+//            }
+//        }
+//
+//        straightCount = 0;
+//        deadwoodRe = 0;
+//        if (clubs.size() >= 3) {
+//            for (int i = 0, j = i + 1; j < clubs.size(); i++, j++) {
+//                if ((bot.getRankValue(Integer.parseInt(clubs.get(i))) + 1) == bot.getRankValue(Integer.parseInt(clubs.get(j)))) {
+//                    straightCount++;
+//                }
+//            }
+//            if (straightCount >= 2) {
+//                for (int i = 0, j = clubs.size() - 1; j >= 0 && i < bot.getSize(); i++) {
+//                    if (bot.getValue(i).equals(clubs.get(j))) {
+//                        bot.toBack(i);
+//                        j--;
+//                        i = 0;
+//                    }
+//                }
+//                for (int index = 0; index < clubs.size(); index++) {
+//                    deadwoodRe += bot.getRankValue(Integer.parseInt(clubs.get(index)));
+//                }
+//                botDW -= deadwoodRe;
+//            }
+//        }
+//
+//        straightCount = 0;
+//        deadwoodRe = 0;
+//        if (diamonds.size() >= 3) {
+//            for (int i = 0, j = i + 1; j < diamonds.size(); i++, j++) {
+//                if ((bot.getRankValue(Integer.parseInt(diamonds.get(i))) + 1) == bot.getRankValue(Integer.parseInt(diamonds.get(j)))) {
+//                    straightCount++;
+//                }
+//            }
+//            if (straightCount >= 2) {
+//                for (int i = 0, j = diamonds.size() - 1; j >= 0 && i < bot.getSize(); i++) {
+//                    if (bot.getValue(i).equals(diamonds.get(j))) {
+//                        bot.toBack(i);
+//                        j--;
+//                        i = 0;
+//                    }
+//                }
+//                for (int index = 0; index < diamonds.size(); index++) {
+//                    deadwoodRe += bot.getRankValue(Integer.parseInt(diamonds.get(index)));
+//                }
+//                botDW -= deadwoodRe;
+//            }
+//        }
+//
+//        straightCount = 0;
+//        deadwoodRe = 0;
+//        if (hearts.size() >= 3) {
+//            for (int i = 0, j = i + 1; j < hearts.size(); i++, j++) {
+//                if ((bot.getRankValue(Integer.parseInt(hearts.get(i))) + 1) == bot.getRankValue(Integer.parseInt(hearts.get(j)))) {
+//                    straightCount++;
+//                }
+//            }
+//            if (straightCount >= 2) {
+//                for (int i = 0, j = hearts.size() - 1; j >= 0 && i < bot.getSize(); i++) {
+//                    if (bot.getValue(i).equals(hearts.get(j))) {
+//                        bot.toBack(i);
+//                        j--;
+//                        i = 0;
+//                    }
+//                }
+//                for (int index = 0; index < hearts.size(); index++) {
+//                    deadwoodRe += bot.getRankValue(Integer.parseInt(hearts.get(index)));
+//                }
+//                botDW -= deadwoodRe;
+//            }
+//        }
+//
+//        straightCount = 0;
+//        deadwoodRe = 0;
+//        if (spades.size() >= 3) {
+//            for (int i = 0, j = i + 1; j < spades.size(); i++, j++) {
+//                if ((bot.getRankValue(Integer.parseInt(spades.get(i))) + 1) == bot.getRankValue(Integer.parseInt(spades.get(j)))) {
+//                    straightCount++;
+//                }
+//            }
+//            if (straightCount >= 2) {
+//                for (int i = 0, j = spades.size() - 1; j >= 0 && i < bot.getSize(); i++) {
+//                    if (bot.getValue(i).equals(spades.get(j))) {
+//                        bot.toBack(i);
+//                        j--;
+//                        i = 0;
+//                    }
+//                }
+//                for (int index = 0; index < spades.size(); index++) {
+//                    deadwoodRe += bot.getRankValue(Integer.parseInt(spades.get(index)));
+//                }
+//                botDW -= deadwoodRe;
+//            }
+//        }
+//    }
 
     private void botDropCard() {
         playable.set(false);

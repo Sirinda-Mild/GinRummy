@@ -14,12 +14,12 @@ import javafx.scene.Node;
 public class Player {
 
     private ObservableList<Node> cards;
-    ArrayList<String> cardInHand = new ArrayList<>();
+    ArrayList<String> deadwoodInHand = new ArrayList<>();
     ArrayList<String> straightInHand = new ArrayList<>();
     ArrayList<String> kindInHand = new ArrayList<>();
 
-    public Player(ObservableList<Node> cards) {
-        this.cards = cards;
+    public Player(ObservableList<Node> deadwoodCards) {
+        this.cards = deadwoodCards;
     }
 
     public ObservableList<Node> getCards() {
@@ -54,7 +54,7 @@ public class Player {
 
     public int Deadwood() {
         int deadwood = 0;
-        for (int index = 0; index < cardInHand.size(); index++) {
+        for (int index = 0; index < deadwoodInHand.size(); index++) {
             deadwood += this.getRankValue(index);
         }
         System.out.println(deadwood);
@@ -112,10 +112,9 @@ public class Player {
         return card;
     }
 
-    public static ArrayList<ArrayList<Integer>> hasKind(ArrayList<Integer> arr) {
+    public static ArrayList<ArrayList<Integer>> getKindIndex(ArrayList<Integer> arr) {
 
         ArrayList<ArrayList<Integer>> result = new ArrayList<ArrayList<Integer>>();
-        Collections.sort(arr);
 
         int indexOfSubArray = 0;
         int kindCount = 0;
@@ -131,9 +130,10 @@ public class Player {
                     /* They are kind. */
                     result.add(new ArrayList<Integer>());
                     /* Add the continue cards into the result array */
-                    for (int k = kindCount + 1; k > 0 + 1; k--) {
+                    for (int k = 0; k < kindCount + 1; k++) {
                         /* Add index in the sub array */
                         result.get(indexOfSubArray).add(i - k);
+                        System.out.println(result.get(indexOfSubArray));
                     }
                     indexOfSubArray++;
                 }
@@ -176,7 +176,7 @@ public class Player {
 
     }
 
-    public static int hasStraight(ArrayList<Integer> arr) {
+    public static int getAmountOfStraigth(ArrayList<Integer> arr) {
 
         /* Sort before matching */
         Collections.sort(arr);
@@ -218,7 +218,7 @@ public class Player {
         return amountOfMatched;
     }
 
-    public static ArrayList<ArrayList<Integer>> getStraightMatchedIndex(ArrayList<Integer> arr) {
+    public static ArrayList<ArrayList<Integer>> getStraightIndex(ArrayList<Integer> arr) {
 
         Collections.sort(arr);
 
@@ -270,18 +270,41 @@ public class Player {
     }
 
     public void sortCards() {
-        ArrayList<String> rankValue = new ArrayList<>();
+        //sort card from rank
+        ArrayList<String> cardSorted = new ArrayList<>();
         for (int i = 0; i < this.getSize(); i++) {
-            rankValue.add(this.getValue(i));
+            cardSorted.add(this.getValue(i));
         }
-        Collections.sort(rankValue);
-        for (int i = 0, j = rankValue.size() - 1; j >= 0 && i < this.getSize(); i++) {
-            if (this.getValue(i).equals(rankValue.get(j))) {
+        Collections.sort(cardSorted);
+        for (int i = 0, j = cardSorted.size() - 1; j >= 0 && i < this.getSize(); i++) {
+            if (this.getValue(i).equals(cardSorted.get(j))) {
                 this.toBack(i);
                 j--;
                 i = 0;
             }
         }
+        
+        //convert rank card in hand to integer
+        ArrayList<Integer> rankCardsInHand = new ArrayList<>();
+        for (int i = 0; i < this.getSize(); i++) {
+            rankCardsInHand.add(this.getRankValueForCheckKind(i));
+        }
+        System.out.println(rankCardsInHand);
+        ArrayList<ArrayList<Integer>> kindIndex = this.getKindIndex(rankCardsInHand);
+        ArrayList<ArrayList<Integer>> straightIndex = this.getStraightIndex(rankCardsInHand);
+        //check of a kind
+        System.out.println(kindIndex);
+        if (kindIndex != null) {
+            //if has kind get kind in array list
+            for (int i = 0; i < kindIndex.size(); i++) {
+                System.out.println("kind chud" + i);
+                for (int k = 0; k < kindIndex.get(i).size(); k++) {
+                    System.out.println(kindIndex.get(i).get(k));
+                    kindInHand.add(this.getValue(kindIndex.get(i).get(k)));
+                }
+            }
+        }
+        System.out.println(kindInHand);
     }
 
     public void sortStraigthOrKindInHand() {
@@ -290,8 +313,7 @@ public class Player {
         for (int i = 0; i < this.getSize(); i++) {
             rankCardsInHand.add(this.getRankValueForCheckKind(i));
         }
-
-        //get straight cards to back
+        //push straight cards to back
         for (int i = 0, j = kindInHand.size() - 1; j >= 0 && i < this.getSize(); i++) {
             if (this.getValue(i).equals(kindInHand.get(j))) {
                 this.toBack(i);
