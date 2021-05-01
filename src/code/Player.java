@@ -16,9 +16,9 @@ public class Player {
     private ObservableList<Node> deadwoodCards;
     private ObservableList<Node> straightCards;
     private ObservableList<Node> kindCards;
-    ArrayList<String> deadwoodInHand = new ArrayList<>();
-    ArrayList<String> straightInHand = new ArrayList<>();
-    ArrayList<String> kindInHand = new ArrayList<>();
+    ArrayList<Integer> deadwoodInHand = new ArrayList<>();
+    ArrayList<Integer> straightInHand = new ArrayList<>();
+    ArrayList<Integer> kindInHand = new ArrayList<>();
 
     public Player(ObservableList<Node> deadwoodCards, ObservableList<Node> straightCards, ObservableList<Node> kindCards) {
         this.deadwoodCards = deadwoodCards;
@@ -26,19 +26,27 @@ public class Player {
         this.kindCards = kindCards;
     }
 
-    public ObservableList<Node> getCards() {
+    public ObservableList<Node> getDeadwoodCards() {
         return deadwoodCards;
     }
 
-    public void takeCard(Card card) {
+    public ObservableList<Node> getStraightCards() {
+        return straightCards;
+    }
+
+    public ObservableList<Node> getKindCards() {
+        return kindCards;
+    }
+
+    public void takeDeadwoodCard(Card card) {
         deadwoodCards.add(card);
     }
 
-    public void toBack(int index) {
+    public void DeadwoodToBack(int index) {
         deadwoodCards.get(index).toBack();
     }
 
-    public Node getNode(int index) {
+    public Node getDeadwoodNode(int index) {
         return deadwoodCards.get(index);
     }
 
@@ -50,6 +58,8 @@ public class Player {
 
     public void reset() {
         deadwoodCards.clear();
+        straightCards.clear();
+        kindCards.clear();
     }
 
     public int Deadwood() {
@@ -124,17 +134,31 @@ public class Player {
             if (arr.get(i) == arr.get(i + 1)) {
                 kindCount++;
                 isContinue = true;
+                System.out.println("KIND COUNT ADDED");
             } else {
                 /* No more continue. */
+                
+                /* added 1-5-2021 */
+                if (isContinue == true && arr.size() - 2 == i) {
+                    /* case of the last 2 index of the array */
+                    System.out.println("CASE OF LAST 2 INDEX OF THE ARRAY OCCURED");
+                    if (arr.get(i) == arr.get(i + 1)) {
+                        /* They are kind */
+                        kindCount++;
+                        i++;
+                    }
+                }
+                
                 if (isContinue && kindCount >= 2) {
                     /* They are kind. */
                     result.add(new ArrayList<Integer>());
+                    System.out.println("NEW SUB ARRAYLIST OF KIND INDEX ADDED");
                     /* Add the continue cards into the result array */
                     for (int k = 0; k < kindCount + 1; k++) {
                         /* Add index in the sub array */
                         result.get(indexOfSubArray).add(i - k);
-                        System.out.println(result.get(indexOfSubArray));
                     }
+                    Collections.sort(result.get(indexOfSubArray));
                     indexOfSubArray++;
                 }
 
@@ -143,7 +167,7 @@ public class Player {
             }
 
         }
-
+System.out.println("KINDINDEX SIZE :: " + result.size());
         return (result.isEmpty()) ? null : result;
 
     }
@@ -220,8 +244,6 @@ public class Player {
 
     public static ArrayList<ArrayList<Integer>> getStraightIndex(ArrayList<Integer> arr) {
 
-        Collections.sort(arr);
-
         ArrayList<ArrayList<Integer>> result = new ArrayList<ArrayList<Integer>>();
 
         int indexOfSubArray = 0;
@@ -269,7 +291,7 @@ public class Player {
         return (result.isEmpty()) ? null : result;
     }
 
-    public void sortCards() {
+    public void sortDeadwoodCards() {
         //sort card from rank
         ArrayList<String> cardSorted = new ArrayList<>();
         for (int i = 0; i < this.getDeadwoodSize(); i++) {
@@ -278,12 +300,13 @@ public class Player {
         Collections.sort(cardSorted);
         for (int i = 0, j = cardSorted.size() - 1; j >= 0 && i < this.getDeadwoodSize(); i++) {
             if (this.getDeadwoodValue(i).equals(cardSorted.get(j))) {
-                this.toBack(i);
+                this.DeadwoodToBack(i);
                 j--;
                 i = 0;
             }
         }
 
+        //CHECK KIND
         //convert rank card in hand to integer
         ArrayList<Integer> rankCardsInHand = new ArrayList<>();
         for (int i = 0; i < this.getDeadwoodSize(); i++) {
@@ -293,18 +316,28 @@ public class Player {
         ArrayList<ArrayList<Integer>> kindIndex = this.getKindIndex(rankCardsInHand);
         ArrayList<ArrayList<Integer>> straightIndex = this.getStraightIndex(rankCardsInHand);
         //check of a kind
-        System.out.println(kindIndex);
+        System.out.println("kindindex size : " + kindIndex.size());
         if (kindIndex != null) {
             //if has kind get kind in array list
             for (int i = 0; i < kindIndex.size(); i++) {
-                System.out.println("kind chud" + i);
                 for (int k = 0; k < kindIndex.get(i).size(); k++) {
-                    System.out.println(kindIndex.get(i).get(k));
-                    kindInHand.add(this.getDeadwoodValue(kindIndex.get(i).get(k)));
+                    kindInHand.add(kindIndex.get(i).get(k));
                 }
             }
         }
+        System.out.println("before");
         System.out.println(kindInHand);
+        System.out.println(deadwoodCards);
+        System.out.println(kindCards);
+        //add card from deadwood to kind observable list
+        for (int index = 0; index < kindInHand.size(); index++) {
+            kindCards.add(deadwoodCards.get(kindInHand.get(0)));
+            
+        }
+        System.out.println("after");
+        System.out.println(kindInHand);
+        System.out.println(deadwoodCards);
+        System.out.println(kindCards);
     }
 
     public void sortStraigthOrKindInHand() {
@@ -316,7 +349,7 @@ public class Player {
         //push straight cards to back
         for (int i = 0, j = kindInHand.size() - 1; j >= 0 && i < this.getDeadwoodSize(); i++) {
             if (this.getDeadwoodValue(i).equals(kindInHand.get(j))) {
-                this.toBack(i);
+                this.DeadwoodToBack(i);
                 j--;
                 i = 0;
             }

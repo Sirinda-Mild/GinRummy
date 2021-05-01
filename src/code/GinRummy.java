@@ -76,28 +76,48 @@ public class GinRummy extends Application {
         VBox vbox = new VBox(20);
         vbox.setAlignment(Pos.CENTER);
 
-        //set final pane
+        //set final pane        
         HBox botCardsPane = new HBox(10);
+        HBox botDeadwoodCardsPane = new HBox(10);
+        HBox botStraightCardsPane = new HBox(10);
+        HBox botKindCardsPane = new HBox(10);
+
+        HBox playerCardsPane = new HBox(10);
         HBox playerDeadwoodCardsPane = new HBox(10);
+        HBox playerStraightCardsPane = new HBox(10);
+        HBox playerKindCardsPane = new HBox(10);
+
         HBox drawCardsPane = new HBox(10);
         StackPane upCardPilePane = new StackPane();
         StackPane drawPilePane = new StackPane();
         playerDeadwoodCardsPane.setPadding(new Insets(5, 5, 5, 5));
-        botCardsPane.setPadding(new Insets(5, 5, 5, 5));
+        botDeadwoodCardsPane.setPadding(new Insets(5, 5, 5, 5));
+        playerKindCardsPane.setPadding(new Insets(5, 5, 5, 5));
+        botKindCardsPane.setPadding(new Insets(5, 5, 5, 5));
+        playerStraightCardsPane.setPadding(new Insets(5, 5, 5, 5));
+        botStraightCardsPane.setPadding(new Insets(5, 5, 5, 5));
 
         playerDeadwoodCardsPane.setAlignment(Pos.CENTER);
-        botCardsPane.setAlignment(Pos.CENTER);
+        botDeadwoodCardsPane.setAlignment(Pos.CENTER);
+        playerKindCardsPane.setAlignment(Pos.CENTER);
+        botKindCardsPane.setAlignment(Pos.CENTER);
+        playerStraightCardsPane.setAlignment(Pos.CENTER);
+        botStraightCardsPane.setAlignment(Pos.CENTER);
         upCardPilePane.setAlignment(Pos.CENTER);
         drawPilePane.setAlignment(Pos.CENTER);
+        playerCardsPane.setAlignment(Pos.CENTER);
+        botCardsPane.setAlignment(Pos.CENTER);
 
         drawCardsPane.setAlignment(Pos.CENTER);
         drawCardsPane.getChildren().addAll(drawPilePane, upCardPilePane);
 
         //declare arraylist
-        player = new Player(playerDeadwoodCardsPane.getChildren());
-        bot = new Bot(botCardsPane.getChildren());
+        player = new Player(playerDeadwoodCardsPane.getChildren(), playerStraightCardsPane.getChildren(), playerKindCardsPane.getChildren());
+        bot = new Bot(botDeadwoodCardsPane.getChildren(), botStraightCardsPane.getChildren(), botKindCardsPane.getChildren());
         upcard = new UpCard(upCardPilePane.getChildren());
         drawpile = new DrawPile(drawPilePane.getChildren());
+        playerCardsPane.getChildren().addAll(playerKindCardsPane, playerStraightCardsPane, playerDeadwoodCardsPane);
+        botCardsPane.getChildren().addAll(botKindCardsPane, botStraightCardsPane, botDeadwoodCardsPane);
 
         //Bot Score
         Text botScore = new Text("Dealer Score : ");
@@ -135,7 +155,7 @@ public class GinRummy extends Application {
         // ADD STACKS TO ROOT LAYOUT
         buttonBox.getChildren().addAll(btnTake, btnPass);
         buttonBox.setAlignment(Pos.CENTER_RIGHT);
-        vbox.getChildren().addAll(botCardsPane, botScore, drawCardsPane, buttonBox, playerInfo, playerDeadwoodCardsPane);
+        vbox.getChildren().addAll(botCardsPane, botScore, drawCardsPane, buttonBox, playerInfo, playerCardsPane);
         rootLayout.getChildren().addAll(new StackPane(BG), new StackPane(vbox));
         root.getChildren().addAll(background, rootLayout);
 
@@ -148,7 +168,7 @@ public class GinRummy extends Application {
 
         // INIT BUTTONS
         btnTake.setOnAction(event -> {
-            player.takeCard((Card) upcard.drawCard());
+            player.takeDeadwoodCard((Card) upcard.drawCard());
             if (firstPass == true) {
                 root.getChildren().remove(passText);
             }
@@ -174,7 +194,7 @@ public class GinRummy extends Application {
         });
 
         btnNew.setOnAction(event -> {
-            player.takeCard((Card) drawpile.drawCard());
+            player.takeDeadwoodCard((Card) drawpile.drawCard());
             if (firstPass == true) {
                 root.getChildren().remove(passText);
             }
@@ -183,8 +203,8 @@ public class GinRummy extends Application {
         startNewGame();
         playerDW = player.Deadwood();
         botDW = bot.Deadwood();
-        player.sortCards();
-        bot.sortCards();
+        player.sortDeadwoodCards();
+//        bot.sortDeadwoodCards();
         //Score 
         playerScore.textProperty().bind(new SimpleStringProperty("Player Score : ").concat(Integer.toString(player.Score())));
         playerDeadwood.textProperty().bind(new SimpleStringProperty("Player Deadwood : ").concat(Integer.toString(playerDW)));
@@ -192,7 +212,6 @@ public class GinRummy extends Application {
 
 //        checkPlayerStraight();
 //        checkBotStraight();
-
         return root;
     }
 
@@ -204,24 +223,29 @@ public class GinRummy extends Application {
         bot.reset();
         player.reset();
 
-            player.takeCard(new Card("c","5"));
-            player.takeCard(new Card("h","7"));
-            player.takeCard(new Card("s","6"));
-            player.takeCard(new Card("c","2"));
-            player.takeCard(new Card("s","5"));
-            player.takeCard(new Card("d","5"));
-            player.takeCard(new Card("h","2"));
+        player.takeDeadwoodCard(new Card("c", "7"));
+        player.takeDeadwoodCard(new Card("h", "7"));
+        player.takeDeadwoodCard(new Card("s", "3"));
+        player.takeDeadwoodCard(new Card("s", "7"));
+        player.takeDeadwoodCard(new Card("d", "5"));
+        player.takeDeadwoodCard(new Card("d", "7"));
+        player.takeDeadwoodCard(new Card("h", "3"));
+        player.takeDeadwoodCard(new Card("s", "5"));
+        player.takeDeadwoodCard(new Card("c", "3"));
+        player.takeDeadwoodCard(new Card("s", "2"));
+        System.out.println("deadwood : " + player.getDeadwoodCards());
+        System.out.println("kind : " + player.getKindCards());
+        System.out.println("straight : " + player.getStraightCards());
         //player and bot draw card
         for (int i = 0; i < 10; i++) {
-//            player.takeCard(deck.drawCard());
-            bot.takeCard(deck.drawCard());
+//            player.takeDeadwoodCard(deck.drawCard());
+            bot.takeDeadwoodCard(deck.drawCard());
         }
 
         //deck keep card
         for (int i = 0; i < 31; i++) {
             drawpile.keepCard(deck.drawCard());
         }
-
         //open top card
         upcard.keepCard(deck.drawCard());
 
@@ -252,7 +276,7 @@ public class GinRummy extends Application {
     private void botTakeorPass() {
         playable.set(false);
         if (bot.takeOrPass(upcard, bot) == true) {
-            bot.takeCard((Card) upcard.drawCard());
+            bot.takeDeadwoodCard((Card) upcard.drawCard());
             isTake = true;
         } else {
             isPass = true;
@@ -502,7 +526,6 @@ public class GinRummy extends Application {
 //            }
 //        }
 //    }
-
     private void botDropCard() {
         playable.set(false);
 
