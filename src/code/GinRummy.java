@@ -223,15 +223,15 @@ public class GinRummy extends Application {
         bot.reset();
         player.reset();
 
-        player.takeDeadwoodCard(new Card("c", "7"));
-        player.takeDeadwoodCard(new Card("h", "7"));
-        player.takeDeadwoodCard(new Card("s", "3"));
+        player.takeDeadwoodCard(new Card("c", "2"));
+        player.takeDeadwoodCard(new Card("h", "5"));
+        player.takeDeadwoodCard(new Card("s", "8"));
         player.takeDeadwoodCard(new Card("s", "7"));
         player.takeDeadwoodCard(new Card("d", "5"));
         player.takeDeadwoodCard(new Card("d", "7"));
-        player.takeDeadwoodCard(new Card("h", "3"));
-        player.takeDeadwoodCard(new Card("s", "5"));
         player.takeDeadwoodCard(new Card("c", "3"));
+        player.takeDeadwoodCard(new Card("c", "4"));
+        player.takeDeadwoodCard(new Card("s", "9"));
         player.takeDeadwoodCard(new Card("s", "2"));
         System.out.println("deadwood : " + player.getDeadwoodCards());
         System.out.println("kind : " + player.getKindCards());

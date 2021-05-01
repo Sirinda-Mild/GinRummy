@@ -16,8 +16,8 @@ public class Player {
     private ObservableList<Node> deadwoodCards;
     private ObservableList<Node> straightCards;
     private ObservableList<Node> kindCards;
-    ArrayList<Integer> deadwoodInHand = new ArrayList<>();
-    ArrayList<Integer> straightInHand = new ArrayList<>();
+//    ArrayList<Integer> deadwoodInHand = new ArrayList<>();
+    ArrayList<ArrayList<Integer>> straightInHand = new ArrayList<ArrayList<Integer>>();
     ArrayList<ArrayList<Integer>> kindInHand = new ArrayList<ArrayList<Integer>>();
 
     public Player(ObservableList<Node> deadwoodCards, ObservableList<Node> straightCards, ObservableList<Node> kindCards) {
@@ -64,7 +64,7 @@ public class Player {
 
     public int Deadwood() {
         int deadwood = 0;
-        for (int index = 0; index < deadwoodInHand.size(); index++) {
+        for (int index = 0; index < deadwoodCards.size(); index++) {
             deadwood += this.getDeadwoodRankValue(index);
         }
         System.out.println(deadwood);
@@ -147,142 +147,8 @@ public class Player {
                 kindCount = 0;
             }
         }
-
-//
-//        /* Written 1-5-2021*/
-//        for (int i = 0, j = 1; j < arr.size(); i++, j++) {
-//            if (arr.get(i) == arr.get(j)) {
-//                kindCount++;
-//            }
-//            if (arr.get(i) != arr.get(j)) {
-//                System.out.println("NOT BEING KIND " + i);
-//                /* in case of last 2 cards */
-//                if (arr.get(arr.size() - 1) == arr.get(arr.size() - 2)) {
-//                    kindCount++;
-//                }
-//                if (kindCount >= 2) {
-//                    System.out.println("CREATING INSTANCE OF NEW SUB ARRAY");
-//
-//                    result.add(new ArrayList<Integer>());
-//                    for (int k = 0; k < kindCount + 1; k++) {
-//                        result.get(indexOfSubArray).add(i - k);
-//                    }
-////                    Collections.sort(result.get(indexOfSubArray));
-//                    indexOfSubArray++;
-//                }
-//                kindCount = 0;
-//            }
-//            System.out.println("KIND COUNT VALUE :: " + kindCount + "VALUE OF CARD :: " + arr.get(i) + "," + arr.get(j));
-//
-//        }
-//
-////
-////        for (int i = 0, j = 1; j < arr.size(); i++, j++) {
-////            if (arr.get(i) == arr.get(j)) {
-////                kindCount++;
-////                System.out.println("KIND COUNT ADDED");
-////            }
-////            /* added 1-5-2021 */
-////            if (arr.size() - 2 == i) {
-////                /* case of the last 2 index of the array */
-////                System.out.println("CASE OF LAST 2 INDEX OF THE ARRAY OCCURED");
-////                if (arr.get(i) == arr.get(j)) {
-////                    /* They are kind */
-////                    kindCount++;
-////                    i++;
-////                }
-////            }
-////
-////            if (kindCount >= 2) {
-////                /* They are kind. */
-////                result.add(new ArrayList<Integer>());
-////                System.out.println("NEW SUB ARRAYLIST OF KIND INDEX ADDED");
-////                /* Add the continue cards into the result array */
-////                for (int k = 0; k < kindCount + 1; k++) {
-////                    /* Add index in the sub array */
-////                    result.get(indexOfSubArray).add(i - k);
-////                }
-////                Collections.sort(result.get(indexOfSubArray));
-////                indexOfSubArray++;
-////            }
-////
-////            kindCount = 0;
-////
-////        }
-        System.out.println("KINDINDEX SIZE :: " + result.size());
-        System.out.println("KINDINDEX CONTAINS :: " + result);
         return (result.isEmpty()) ? null : result;
 
-    }
-
-    public static int getAmountOfKind(ArrayList<Integer> arr) {
-        Collections.sort(arr);
-
-        int amountOfKind = 0;
-        int kindCount = 0;
-        boolean isContinue = false;
-
-        for (int i = 0; i < arr.size() - 1; i++) {
-            if (arr.get(i) == arr.get(i + 1)) {
-                kindCount++;
-                isContinue = true;
-            } else {
-                /* No more continue. */
-                if (isContinue && kindCount >= 2) {
-                    /* They are kind. */
-                    amountOfKind++;
-                }
-
-                isContinue = false;
-                kindCount = 0;
-            }
-
-        }
-
-        return amountOfKind;
-
-    }
-
-    public static int getAmountOfStraigth(ArrayList<Integer> arr) {
-
-        /* Sort before matching */
-        Collections.sort(arr);
-
-        boolean isContinue = false;
-
-        /*
-         * Straight count will track the amount of pair which are consequently match ex.
-         * if straightCount is 3 -> means the amount of card has straight is 4.
-         */
-        int straightCount = 0;
-
-        /* the amount of set that are being straight */
-        int amountOfMatched = 0;
-
-        for (int i = 0; i < arr.size() - 1; i++) {
-            if (arr.get(i + 1) - arr.get(i) == 1 && i != arr.size() - 2) {
-                /* If the next number is more than the current number for 1 (Sequencely) */
-                isContinue = true;
-                straightCount++;
-                /* track amount of straight */
-            } else {
-                /* No more continue */
-                if (isContinue == true) {
-                    if (straightCount >= 2) {
-                        /* They are straighted */
-                        amountOfMatched++;
-                        straightCount = 0;
-                    } else {
-                        straightCount = 0;
-                        /* reset count back to 0 */
-                    }
-                    isContinue = false;
-                    /* Not continue. */
-                }
-
-            }
-        }
-        return amountOfMatched;
     }
 
     public static ArrayList<ArrayList<Integer>> getStraightIndex(ArrayList<Integer> arr) {
@@ -334,56 +200,79 @@ public class Player {
         return (result.isEmpty()) ? null : result;
     }
 
-    public void sortDeadwoodCards() {
-        //sort card from rank
+    public ArrayList<Integer> addRankToIntArraylist() {
+        //convert rank card in deadwoodcards to integer
+        ArrayList<Integer> cardsList = new ArrayList<>();
+        for (int i = 0; i < deadwoodCards.size(); i++) {
+            cardsList.add(this.getRankValueForCheckKind(i));
+        }
+        return cardsList;
+    }
+
+    public void sortCards(ObservableList<Node> card) {
+        //sort card from rank and suit
         ArrayList<String> cardSorted = new ArrayList<>();
-        for (int i = 0; i < this.getDeadwoodSize(); i++) {
-            cardSorted.add(this.getDeadwoodValue(i));
+        for (int i = 0; i < card.size(); i++) {
+            cardSorted.add(card.get(i).toString());
         }
         Collections.sort(cardSorted);
-        for (int i = 0, j = cardSorted.size() - 1; j >= 0 && i < this.getDeadwoodSize(); i++) {
-            if (this.getDeadwoodValue(i).equals(cardSorted.get(j))) {
-                this.DeadwoodToBack(i);
+        for (int i = 0, j = cardSorted.size() - 1; j >= 0 && i < card.size(); i++) {
+            if (card.get(i).toString().equals(cardSorted.get(j))) {
+                card.get(i).toBack();
                 j--;
                 i = 0;
             }
         }
+    }
+
+    public void sortDeadwoodCards() {
+        //sort card in deadwood card
+        sortCards(deadwoodCards);
 
         //CHECK KIND
-        //convert rank card in hand to integer
-        ArrayList<Integer> rankCardsInHand = new ArrayList<>();
-        for (int i = 0; i < this.getDeadwoodSize(); i++) {
-            rankCardsInHand.add(this.getRankValueForCheckKind(i));
-        }
-        System.out.println(rankCardsInHand);
-        kindInHand = this.getKindIndex(rankCardsInHand);
-        ArrayList<ArrayList<Integer>> straightIndex = this.getStraightIndex(rankCardsInHand);
-        //check of a kind
-        System.out.println("kindindex size : " + kindInHand.size());
-//        if (kindIndex != null) {
-//            //if has kind get kind in array list
-//            for (int i = 0; i < kindIndex.size(); i++) {
-//                kindInHand.add(kindIndex.get(i));
-//            }
-//        }
-        System.out.println("before");
-        System.out.println(kindInHand);
-        System.out.println(deadwoodCards);
-        System.out.println(kindCards);
-        //add card from deadwood to kind observable list
-        for (int i = kindInHand.size() - 1; i >= 0; i--) {
-            System.out.println("i : " + i);
-            for (int index = kindInHand.get(i).size() - 1; index >= 0; index--) {
-                System.out.println("index : " + index);
-                System.out.println(deadwoodCards.get(kindInHand.get(i).get(index)));
-                kindCards.add(deadwoodCards.get(kindInHand.get(i).get(index)));
+        kindInHand = this.getKindIndex(addRankToIntArraylist());
 
+        if (kindInHand != null) {
+            //add card from deadwood to kind observable list
+            for (int i = kindInHand.size() - 1; i >= 0; i--) {
+                for (int index = kindInHand.get(i).size() - 1; index >= 0; index--) {
+                    kindCards.add(deadwoodCards.get(kindInHand.get(i).get(index)));
+                }
+            }
+            sortCards(kindCards);
+        }
+
+        //CHECK STRAIGHT
+        //keep suit on their own array list
+        ArrayList<Integer> clubs = new ArrayList<>();
+        ArrayList<Integer> diamonds = new ArrayList<>();
+        ArrayList<Integer> hearts = new ArrayList<>();
+        ArrayList<Integer> spades = new ArrayList<>();
+        int straightCount = 0;
+        int deadwoodRe = 0;
+        for (int i = 0; i < deadwoodCards.size(); i++) {
+            if (getDeadwoodSuit(i) == 'c') {
+                clubs.add(i);
+            } else if (getDeadwoodSuit(i) == 'd') {
+                diamonds.add(i);
+            } else if (getDeadwoodSuit(i) == 'h') {
+                hearts.add(i);
+            } else if (getDeadwoodSuit(i) == 's') {
+                spades.add(i);
             }
         }
-        System.out.println("after");
-        System.out.println(kindInHand);
-        System.out.println(deadwoodCards);
-        System.out.println(kindCards);
+        System.out.println("clubs");
+        System.out.println(clubs + " : " + clubs.size());
+        System.out.println("diamonds");
+        System.out.println(diamonds + " : " + diamonds.size());
+        System.out.println("hearts");
+        System.out.println(hearts + " : " + hearts.size());
+        System.out.println("spades");
+        System.out.println(spades + " : " + spades.size());
+        if (clubs.size() >= 3) {
+            ArrayList< ArrayList<Integer>> clubsStraightInHand = this.getStraightIndex(addRankToIntArraylist());
+            System.out.println(clubsStraightInHand);
+        }
     }
 
     public void sortStraigthOrKindInHand() {
