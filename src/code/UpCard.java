@@ -26,9 +26,7 @@ public class UpCard {
     }
 
     public Node drawCard() {
-        Node card = cards.get(cards.size() - 1);
-        cards.remove(cards.size() - 1);
-        return card;
+        return cards.remove(cards.size() - 1);
     }
 
     public char getSuit(int index) {

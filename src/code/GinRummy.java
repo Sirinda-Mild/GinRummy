@@ -53,6 +53,7 @@ public class GinRummy extends Application {
     private Glow glow = new Glow();
     private boolean firstPass = false;
     private boolean botTurn = false;
+    private boolean isTake = false;
 
     private Parent createGame() {
         System.out.println("creatgame laewja");
@@ -213,12 +214,7 @@ public class GinRummy extends Application {
         startNewGame();
         player.sortDeadwoodCards();
         bot.sortDeadwoodCards();
-        if (!botTurn) {
-            playerDropCard();
-        }
-        if (botTurn) {
-
-        }
+        playerDropCard();
 
         //Score 
         playerScore.textProperty().bind(new SimpleStringProperty("Player Score : ").concat(Integer.toString(player.Score())));
@@ -238,8 +234,6 @@ public class GinRummy extends Application {
                     event.consume();
                     System.out.println(selectedIndex);
                     upcard.keepCard((Card) player.getDeadwoodNode(index));
-                    player.getDeadwoodCards().remove(index);
-                    botTurn = true;
                 }
             });
         }

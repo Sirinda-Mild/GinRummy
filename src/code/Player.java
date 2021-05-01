@@ -74,7 +74,6 @@ public class Player {
         for (int index = 0; index < deadwoodCards.size(); index++) {
             deadwood += this.getDeadwoodRankValue(index);
         }
-        System.out.println(deadwood);
         return deadwood;
     }
 
@@ -85,6 +84,10 @@ public class Player {
 
     public int getDeadwoodSize() {
         return deadwoodCards.size();
+    }
+
+    public int getAllSize() {
+        return deadwoodCards.size() + kindCards.size() + straightCards.size();
     }
 
     public char getDeadwoodSuit(int index) {
@@ -221,15 +224,11 @@ public class Player {
     }
 
     public ArrayList<Integer> addRankToIntArraylistByCompare(ObservableList<Node> cardsRank, ArrayList<Integer> cardsIndex) {
-        System.out.println("kao add jaa");
         //convert rank in deadwoodcards to integer
         ArrayList<Integer> cardsList = new ArrayList<>();
         for (int i = 0; i < cardsIndex.size(); i++) {
-            System.out.println("kao for laew" + i);
             cardsList.add(getRankValueForCheckKind(cardsRank, cardsIndex.get(i)));
-            System.out.println(cardsList);
         }
-        System.out.println("return dai jaa");
         return cardsList;
     }
 
@@ -334,8 +333,6 @@ public class Player {
 
         //check straight in spades
         if (spades.size() >= 3) {
-            System.out.println("deadwood cards : " + deadwoodCards);
-            System.out.println("straight cards : " + straightCards);
             ArrayList< ArrayList<Integer>> spadesStraightInHand = getStraightIndex(addRankToIntArraylistByCompare(deadwoodCards, spades));
             if (spadesStraightInHand != null) {
                 //add card from deadwood to kind observable list
@@ -350,27 +347,6 @@ public class Player {
         }
     }
 
-//    public void dropCard() {
-//        for (int i = 0; i < deadwoodCards.size(); i++) {
-//            final int index = i;
-//            deadwoodCards.get(i).addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
-//                @Override
-//                public void handle(MouseEvent event) {
-//                    final int selectedIndex = index;
-//                    event.consume();
-//                    System.out.println(selectedIndex);
-//                    deadwoodCards.remove(index);
-//                }
-//            });
-//        }
-//    }
-
-//    private final EventHandler<MouseEvent> removeHandler = evt -> {
-//        if (evt.getButton() == MouseButton.PRIMARY) {
-//            // remove clicked node as child of pane
-//            deadwoodCards.remove(evt.getTarget());
-//        }
-//    };
     @Override
     public String toString() {
         return deadwoodCards.toString();
