@@ -28,14 +28,14 @@ public class Bot extends Player {
         ArrayList<ArrayList<Integer>> hasStraight = new ArrayList<ArrayList<Integer>>();
         int upcardIndex = upcard.getSize() - 1;
 
-        //CHECK OF A KIND
+        //CHECK OF A KIND FROM DEADWOOD
         for (int i = 0; i < getDeadwoodSize(); i++) {
             if ((upcard.getRank(upcardIndex) == getDeadwoodRank(i))) {
                 sameRank++;
             }
         }
 
-        //CHECK STRAIGHT
+        //CHECK STRAIGHT FROM DEADWOOD
         addDeadwoodCardToOwnSuit();
         if (upcard.getSuit(upcardIndex) == 'c') {
 
@@ -101,7 +101,7 @@ public class Bot extends Player {
                 }
             }
         } else if (upcard.getSuit(upcardIndex) == 's') {
-            if (getDiamondsStraightInHand() != null) {
+            if (getSpadesStraightInHand() != null) {
                 for (int i = 0; i < getSpadesStraightInHand().size(); i++) {
                     if (upcard.getRankValueForCheckKind(upcardIndex) == getRankValueForCheckKind(getStraightCards(), getSpadesStraightInHand().get(i).get(0)) - 1
                             || upcard.getRankValue(upcardIndex) == getRankValueForCheckKind(getStraightCards(), getSpadesStraightInHand().get(i).get(getSpadesStraightInHand().get(i).size() - 1)) + 1) {
@@ -112,11 +112,11 @@ public class Bot extends Player {
         }
 
         if (sameRank >= 2 || hasStraight != null) {
-            return 0;
+            return 0; // keep in deadwood
         } else if (isFourth) {
-            return 1;
+            return 1; //keep in kind card
         } else if (isStraight) {
-            return 2;
+            return 2; //keep in straight
         }
 
         return -1;

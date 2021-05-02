@@ -55,6 +55,7 @@ public class GinRummy extends Application {
     private Glow glow = new Glow();
     private DropShadow dropshadow = new DropShadow(BlurType.ONE_PASS_BOX, Color.BLACK, 10, 10, 3, 3);
     private boolean firstPass = false;
+    private boolean botPass = false;
     private int botTurn = -1;
     private boolean isTake = false;
 
@@ -172,8 +173,10 @@ public class GinRummy extends Application {
         root.getChildren().addAll(background, rootLayout);
 
         // INIT BUTTONS
+        //BUTTON DISCARD
         btnDiscard.setOnAction(event -> {
             botAction();
+
             //change button pass to new
             buttonBox.getChildren().remove(btnDiscard);
             buttonBox.getChildren().add(btnTake);
@@ -189,6 +192,7 @@ public class GinRummy extends Application {
             botScore.textProperty().bind(new SimpleStringProperty("Dealer Score : ").concat(Integer.toString(bot.Deadwood())));
         });
 
+        //BUTTON TAKE
         btnTake.setOnAction(event -> {
             player.takeDeadwoodCard((Card) upcard.drawCard());
             root.getChildren().remove(passText);
@@ -197,6 +201,7 @@ public class GinRummy extends Application {
             //change button take to discard
             buttonBox.getChildren().remove(btnPass);
             buttonBox.getChildren().remove(btnTake);
+            buttonBox.getChildren().remove(btnNew);
             buttonBox.getChildren().add(btnDiscard);
             if (player.Deadwood() <= 10) {
                 buttonBox.getChildren().add(btnKnock);
@@ -213,8 +218,13 @@ public class GinRummy extends Application {
 
         });
 
+        //BUTTON PASS
         btnPass.setOnAction(event -> {
             botAction();
+            if (botPass) {
+                root.getChildren().add(passText);
+            }
+            firstPass = true;
 
             //change button pass to new
             buttonBox.getChildren().remove(btnPass);
@@ -230,13 +240,14 @@ public class GinRummy extends Application {
             botScore.textProperty().bind(new SimpleStringProperty("Dealer Score : ").concat(Integer.toString(bot.Deadwood())));
         });
 
+        //BUTTON NEW
         btnNew.setOnAction(event -> {
             player.takeDeadwoodCard((Card) drawpile.drawCard());
             root.getChildren().remove(passText);
 
             //change button take to discard
-            buttonBox.getChildren().remove(btnPass);
             buttonBox.getChildren().remove(btnTake);
+            buttonBox.getChildren().remove(btnNew);
             buttonBox.getChildren().add(btnDiscard);
             if (player.Deadwood() <= 10) {
                 buttonBox.getChildren().add(btnKnock);
@@ -254,6 +265,7 @@ public class GinRummy extends Application {
 
         });
 
+        //BUTTON KNOCK
         btnKnock.setOnAction(event -> {
             root.getChildren().add(endBG);
             root.getChildren().add(playerWin);
@@ -264,6 +276,7 @@ public class GinRummy extends Application {
         bot.sortDeadwoodCards();
 
         playerDropCard();
+        
         //Score 
         playerScore.textProperty().bind(new SimpleStringProperty("Player Score : ").concat(Integer.toString(player.Score())));
         playerDeadwood.textProperty().bind(new SimpleStringProperty("Player Deadwood : ").concat(Integer.toString(player.Deadwood())));
@@ -273,13 +286,15 @@ public class GinRummy extends Application {
             root.getChildren().add(endBG);
             root.getChildren().add(botWin);
         }
-        
+
         return root;
     }
 
     public void botAction() {
         botTurn = bot.botAction(upcard);
-        if (botTurn == -1) {
+        System.out.println("BOT ACTION :: BOT TURN" + botTurn);
+        //bot take card from upcard pile
+        if (botTurn == 0) {
             bot.takeDeadwoodCard((Card) upcard.drawCard());
             bot.sortDeadwoodCards();
             upcard.keepCard((Card) bot.botDropCard());
@@ -291,10 +306,14 @@ public class GinRummy extends Application {
             bot.takeStraightCard((Card) upcard.drawCard());
             bot.sortDeadwoodCards();
             upcard.keepCard((Card) bot.botDropCard());
-        } else {
-            bot.takeDeadwoodCard((Card) drawpile.drawCard());
-            bot.sortDeadwoodCards();
-            upcard.keepCard((Card) bot.botDropCard());
+        } else {//bot take card from draw pile
+            if (firstPass) {
+                bot.takeDeadwoodCard((Card) drawpile.drawCard());
+                bot.sortDeadwoodCards();
+                upcard.keepCard((Card) bot.botDropCard());
+            } else {
+                botPass = true;
+            }
         }
     }
 
