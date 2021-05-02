@@ -57,6 +57,7 @@ public class GinRummy extends Application {
     private boolean firstPass = false;
     private boolean botPass = false;
     private int botTurn = -1;
+    private int playerTurn = -1;
     private boolean isTake = false;
 
     private Parent createGame() {
@@ -115,8 +116,12 @@ public class GinRummy extends Application {
         playerCardsPane.setAlignment(Pos.CENTER);
         botCardsPane.setAlignment(Pos.CENTER);
 
+        Text countDrawpile = new Text(" ");
+        countDrawpile.setFont(Font.font("Tahoma", 25));
+        countDrawpile.setFill(Color.WHITE);
+
         drawCardsPane.setAlignment(Pos.CENTER);
-        drawCardsPane.getChildren().addAll(drawPilePane, upCardPilePane);
+        drawCardsPane.getChildren().addAll(countDrawpile, drawPilePane, upCardPilePane);
 
         //declare arraylist
         player = new Player(playerDeadwoodCardsPane.getChildren(), playerStraightCardsPane.getChildren(), playerKindCardsPane.getChildren());
@@ -162,7 +167,7 @@ public class GinRummy extends Application {
         Button btnPass = new Button("PASS");
         Button btnTake = new Button("TAKE");
         Button btnNew = new Button("NEW");
-        Button btnDiscard = new Button("DISCARD");
+        Button btnDiscard = new Button("END TURN");
         Button btnKnock = new Button("KNOCK");
 
         // ADD STACKS TO ROOT LAYOUT
@@ -179,46 +184,56 @@ public class GinRummy extends Application {
 
             //change button pass to new
             buttonBox.getChildren().remove(btnDiscard);
+            buttonBox.getChildren().remove(btnKnock);
             buttonBox.getChildren().add(btnTake);
             buttonBox.getChildren().add(btnNew);
 
             //sort card
             player.sortDeadwoodCards();
-            bot.sortBotDeadwoodCards();
+            bot.sortDeadwoodCards();
 
             //Score 
             playerScore.textProperty().bind(new SimpleStringProperty("Player Score : ").concat(Integer.toString(player.Score())));
             playerDeadwood.textProperty().bind(new SimpleStringProperty("Player Deadwood : ").concat(Integer.toString(player.Deadwood())));
             botScore.textProperty().bind(new SimpleStringProperty("Dealer Score : ").concat(Integer.toString(bot.Deadwood())));
+            countDrawpile.textProperty().bind(new SimpleStringProperty("").concat(Integer.toString(drawpile.getSize())));
         });
 
         //BUTTON TAKE
         btnTake.setOnAction(event -> {
-            System.out.println("before take card from upcard : " + player.getDeadwoodCards());
             firstPass = true;
-            player.takeDeadwoodCard((Card) upcard.drawCard());
-            System.out.println("after take card from upcard : " + player.getDeadwoodCards());
+            playerActionTake();
             isTake = true;
             root.getChildren().remove(passText);
+            player.Deadwood();
+            bot.Deadwood();
 
             //change button take to discard
             buttonBox.getChildren().remove(btnPass);
             buttonBox.getChildren().remove(btnTake);
             buttonBox.getChildren().remove(btnNew);
             buttonBox.getChildren().add(btnDiscard);
+            buttonBox.getChildren().add(btnKnock);
             if (player.Deadwood() <= 10) {
-                buttonBox.getChildren().add(btnKnock);
+                btnKnock.setDisable(false);
             }
 
+            playerDropCard();
+            if (bot.Deadwood() <= 10) {
+                System.out.println("end game laew jaa");
+                root.getChildren().add(endBG);
+                root.getChildren().add(botWin);
+            }
             //sort card
             player.sortDeadwoodCards();
             System.out.println("after sort : " + player.getDeadwoodCards());
-            bot.sortBotDeadwoodCards();
+            bot.sortDeadwoodCards();
 
             //Score 
             playerScore.textProperty().bind(new SimpleStringProperty("Player Score : ").concat(Integer.toString(player.Score())));
             playerDeadwood.textProperty().bind(new SimpleStringProperty("Player Deadwood : ").concat(Integer.toString(player.Deadwood())));
             botScore.textProperty().bind(new SimpleStringProperty("Dealer Score : ").concat(Integer.toString(bot.Deadwood())));
+            countDrawpile.textProperty().bind(new SimpleStringProperty("").concat(Integer.toString(drawpile.getSize())));
 
         });
 
@@ -236,37 +251,48 @@ public class GinRummy extends Application {
 
             //sort card
             player.sortDeadwoodCards();
-            bot.sortBotDeadwoodCards();
+            bot.sortDeadwoodCards();
 
             //Score 
             playerScore.textProperty().bind(new SimpleStringProperty("Player Score : ").concat(Integer.toString(player.Score())));
             playerDeadwood.textProperty().bind(new SimpleStringProperty("Player Deadwood : ").concat(Integer.toString(player.Deadwood())));
             botScore.textProperty().bind(new SimpleStringProperty("Dealer Score : ").concat(Integer.toString(bot.Deadwood())));
+            countDrawpile.textProperty().bind(new SimpleStringProperty("").concat(Integer.toString(drawpile.getSize())));
         });
 
         //BUTTON NEW
         btnNew.setOnAction(event -> {
-            player.takeDeadwoodCard((Card) drawpile.drawCard());
+            playerActionNew();
             root.getChildren().remove(passText);
             isTake = true;
+
+            player.Deadwood();
+            bot.Deadwood();
 
             //change button take to discard
             buttonBox.getChildren().remove(btnTake);
             buttonBox.getChildren().remove(btnNew);
             buttonBox.getChildren().add(btnDiscard);
+            buttonBox.getChildren().add(btnKnock);
             if (player.Deadwood() <= 10) {
-                buttonBox.getChildren().add(btnKnock);
+                btnKnock.setDisable(false);
             }
 
             //sort card
             player.sortDeadwoodCards();
-            bot.sortBotDeadwoodCards();
+            bot.sortDeadwoodCards();
 
-//            playerDropCard();
+            playerDropCard();
+            if (bot.Deadwood() <= 10) {
+                System.out.println("end game laew jaa");
+                root.getChildren().add(endBG);
+                root.getChildren().add(botWin);
+            }
             //Score 
             playerScore.textProperty().bind(new SimpleStringProperty("Player Score : ").concat(Integer.toString(player.Score())));
             playerDeadwood.textProperty().bind(new SimpleStringProperty("Player Deadwood : ").concat(Integer.toString(player.Deadwood())));
             botScore.textProperty().bind(new SimpleStringProperty("Dealer Score : ").concat(Integer.toString(bot.Deadwood())));
+            countDrawpile.textProperty().bind(new SimpleStringProperty("").concat(Integer.toString(drawpile.getSize())));
 
         });
 
@@ -278,18 +304,14 @@ public class GinRummy extends Application {
 
         startNewGame();
         player.sortDeadwoodCards();
-        bot.sortBotDeadwoodCards();
+        bot.sortDeadwoodCards();
+        btnKnock.setDisable(true);
 
         //Score 
         playerScore.textProperty().bind(new SimpleStringProperty("Player Score : ").concat(Integer.toString(player.Score())));
         playerDeadwood.textProperty().bind(new SimpleStringProperty("Player Deadwood : ").concat(Integer.toString(player.Deadwood())));
         botScore.textProperty().bind(new SimpleStringProperty("Dealer Score : ").concat(Integer.toString(bot.Deadwood())));
-
-        if (bot.Deadwood() <= 10) {
-            System.out.println("end game laew jaa");
-            root.getChildren().add(endBG);
-            root.getChildren().add(botWin);
-        }
+        countDrawpile.textProperty().bind(new SimpleStringProperty("").concat(Integer.toString(drawpile.getSize())));
 
         return root;
     }
@@ -300,26 +322,64 @@ public class GinRummy extends Application {
         //bot take card from upcard pile
         if (botTurn == 0) {
             bot.takeDeadwoodCard((Card) upcard.drawCard());
-            bot.sortBotDeadwoodCards();
+            bot.sortDeadwoodCards();
             upcard.keepCard((Card) bot.botDropCard());
         } else if (botTurn == 1) {
             bot.takeKindCard((Card) upcard.drawCard());
-            bot.sortBotDeadwoodCards();
+            bot.sortDeadwoodCards();
             upcard.keepCard((Card) bot.botDropCard());
         } else if (botTurn == 2) {
             bot.takeStraightCard((Card) upcard.drawCard());
-            bot.sortBotDeadwoodCards();
+            bot.sortDeadwoodCards();
             upcard.keepCard((Card) bot.botDropCard());
         } else {//bot take card from draw pile
             if (firstPass) {
                 bot.takeDeadwoodCard((Card) drawpile.drawCard());
-                bot.sortBotDeadwoodCards();
+                bot.sortDeadwoodCards();
                 upcard.keepCard((Card) bot.botDropCard());
             } else {
                 botPass = true;
             }
         }
         bot.Deadwood();
+    }
+
+    public void playerActionTake() {
+        playerTurn = player.checkUpcardTake(upcard);
+
+        //bot take card from upcard pile
+        if (playerTurn == 1) {
+            player.takeKindCard((Card) upcard.drawCard());
+            player.sortDeadwoodCards();
+        } else if (playerTurn == 2) {
+            player.takeStraightCard((Card) upcard.drawCard());
+            player.sortDeadwoodCards();
+        } else {//bot take card from draw pile
+            player.takeDeadwoodCard((Card) upcard.drawCard());
+            player.sortDeadwoodCards();
+        }
+
+        player.Deadwood();
+
+    }
+
+    public void playerActionNew() {
+        playerTurn = player.checkUpcardTake(drawpile);
+
+        //bot take card from upcard pile
+        if (playerTurn == 1) {
+            player.takeKindCard((Card) drawpile.drawCard());
+            player.sortDeadwoodCards();
+        } else if (playerTurn == 2) {
+            player.takeStraightCard((Card) drawpile.drawCard());
+            player.sortDeadwoodCards();
+        } else {//bot take card from draw pile
+            player.takeDeadwoodCard((Card) drawpile.drawCard());
+            player.sortDeadwoodCards();
+        }
+
+        player.Deadwood();
+
     }
 
     public void playerDropCard() {
@@ -331,7 +391,6 @@ public class GinRummy extends Application {
                 event.consume();
                 if (isTake == true) {
                     upcard.keepCard((Card) player.getDeadwoodCardNode(index));
-                    player.Score();
                     isTake = false;
                 }
             });
@@ -347,15 +406,16 @@ public class GinRummy extends Application {
 
             });
         }
-        //BUGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG 
         //choose straight card to drop
         for (int i = 0; i < player.getStraightCards().size(); i++) {
             final int index = i;
             player.getStraightCardNode(i).setOnMouseClicked(event -> {
                 final int selectedIndex = index;
                 event.consume();
-                upcard.keepCard((Card) player.getStraightCardNode(index));
-                botAction();
+                if (isTake == true) {
+                    upcard.keepCard((Card) player.getStraightCardNode(index));
+                    isTake = false;
+                }
             });
             player.getStraightCardNode(i).setOnMouseEntered(event -> {
                 final int selectedIndex = index;
@@ -374,9 +434,10 @@ public class GinRummy extends Application {
             final int index = i;
             player.getKindCardNode(i).setOnMouseClicked(event -> {
                 final int selectedIndex = index;
-                event.consume();
-                upcard.keepCard((Card) player.getKindCardNode(index));
-                botAction();
+                if (isTake == true) {
+                    upcard.keepCard((Card) player.getStraightCardNode(index));
+                    isTake = false;
+                }
             });
             player.getKindCardNode(i).setOnMouseEntered(event -> {
                 final int selectedIndex = index;
@@ -397,29 +458,29 @@ public class GinRummy extends Application {
         bot.reset();
         player.reset();
 
-//        bot.takeDeadwoodCard(new Card("h","1"));
 //        bot.takeDeadwoodCard(new Card("h","2"));
+//        bot.takeDeadwoodCard(new Card("h","3"));
 //        bot.takeDeadwoodCard(new Card("s","2"));
-//        bot.takeDeadwoodCard(new Card("d","p"));
-//        bot.takeDeadwoodCard(new Card("h","p"));
-//        bot.takeDeadwoodCard(new Card("s","p"));
+//        bot.takeDeadwoodCard(new Card("c","m"));
+//        bot.takeDeadwoodCard(new Card("c","n"));
+//        bot.takeDeadwoodCard(new Card("c","7"));
+//        bot.takeDeadwoodCard(new Card("h","4"));
 //        bot.takeDeadwoodCard(new Card("h","5"));
-//        bot.takeDeadwoodCard(new Card("d","6"));
 //        bot.takeDeadwoodCard(new Card("c","o"));
-//        bot.takeDeadwoodCard(new Card("d","o"));
-        player.takeDeadwoodCard(new Card("h", "1"));
-        player.takeDeadwoodCard(new Card("h", "2"));
-        player.takeDeadwoodCard(new Card("s", "2"));
-        player.takeDeadwoodCard(new Card("d", "p"));
-        player.takeDeadwoodCard(new Card("h", "3"));
-        player.takeDeadwoodCard(new Card("s", "p"));
-        player.takeDeadwoodCard(new Card("h", "8"));
-        player.takeDeadwoodCard(new Card("d", "6"));
-        player.takeDeadwoodCard(new Card("c", "o"));
-        player.takeDeadwoodCard(new Card("d", "o"));
+//        bot.takeDeadwoodCard(new Card("d","8"));
+//        player.takeDeadwoodCard(new Card("h", "1"));
+//        player.takeDeadwoodCard(new Card("h", "2"));
+//        player.takeDeadwoodCard(new Card("s", "2"));
+//        player.takeDeadwoodCard(new Card("d", "p"));
+//        player.takeDeadwoodCard(new Card("h", "3"));
+//        player.takeDeadwoodCard(new Card("s", "p"));
+//        player.takeDeadwoodCard(new Card("h", "8"));
+//        player.takeDeadwoodCard(new Card("d", "6"));
+//        player.takeDeadwoodCard(new Card("c", "o"));
+//        player.takeDeadwoodCard(new Card("d", "o"));
         //player and bot draw card
         for (int i = 0; i < 10; i++) {
-//            player.takeDeadwoodCard(deck.drawCard());
+            player.takeDeadwoodCard(deck.drawCard());
             bot.takeDeadwoodCard(deck.drawCard());
         }
 
@@ -429,8 +490,8 @@ public class GinRummy extends Application {
         }
 
         //open top card
-//        upcard.keepCard(deck.drawCard());
-        upcard.keepCard(new Card("h", "4"));
+        upcard.keepCard(deck.drawCard());
+//        upcard.keepCard(new Card("h", "6"));
     }
 
     @Override

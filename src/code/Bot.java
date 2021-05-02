@@ -38,33 +38,27 @@ public class Bot extends Player {
         //CHECK STRAIGHT FROM DEADWOOD
         addDeadwoodCardToOwnSuit();
         if (upcard.getSuit(upcardIndex) == 'c') {
-
             ArrayList<Integer> clubsNew = addRankToIntArraylistByCompare(getDeadwoodCards(), clubs);
-            System.out.println("CLUB array :: " + clubsNew);
             clubsNew.add(upcard.getRankValue(upcardIndex));
             Collections.sort(clubsNew);
             hasStraight = getStraightIndex(clubsNew);
 
-        } else if (getDeadwoodSuit(upcardIndex) == 'd') {
-
+        } else if (upcard.getSuit(upcardIndex) == 'd') {
             ArrayList<Integer> diamondsNew = addRankToIntArraylistByCompare(getDeadwoodCards(), diamonds);
-            System.out.println("DIAMOND array :: " + diamondsNew);
             diamondsNew.add(upcard.getRankValue(upcardIndex));
             Collections.sort(diamondsNew);
             hasStraight = getStraightIndex(diamondsNew);
 
-        } else if (getDeadwoodSuit(upcardIndex) == 'h') {
+        } else if (upcard.getSuit(upcardIndex) == 'h') {
 
             ArrayList<Integer> heartsNew = addRankToIntArraylistByCompare(getDeadwoodCards(), hearts);
-            System.out.println("HEART array :: " + heartsNew);
             heartsNew.add(upcard.getRankValue(upcardIndex));
             Collections.sort(heartsNew);
             hasStraight = getStraightIndex(heartsNew);
 
-        } else if (getDeadwoodSuit(upcardIndex) == 's') {
+        } else if (upcard.getSuit(upcardIndex) == 's') {
 
             ArrayList<Integer> spadesNew = addRankToIntArraylistByCompare(getDeadwoodCards(), spades);
-            System.out.println("SPADE array :: " + spadesNew);
             spadesNew.add(upcard.getRankValue(upcardIndex));
             Collections.sort(spadesNew);
             hasStraight = getStraightIndex(spadesNew);
@@ -82,54 +76,52 @@ public class Bot extends Player {
         //STRAIGHT 
         addStraightCardToOwnSuit();
         if (upcard.getSuit(upcardIndex) == 'c') {
-            if (getClubsStraightInHand() != null) {
-                for (int i = 0; i < getClubsStraightInHand().size(); i++) {
-                    if (upcard.getRankValueForCheckKind(upcardIndex) == (getRankValueForCheckKind(getStraightCards(), getClubsStraightInHand().get(i).get(0)) - 1)
-                            || upcard.getRankValue(upcardIndex) == getRankValueForCheckKind(getStraightCards(), getClubsStraightInHand().get(i).get(getClubsStraightInHand().get(i).size() - 1)) + 1) {
+            if (clubs != null) {
+                for (int i = 0; i < clubs.size(); i++) {
+                    if ((upcard.getRankValueForCheckKind(upcardIndex)) == (getRankValueForCheckKind(getStraightCards(), clubs.get(0)) - 1)
+                            || (upcard.getRankValueForCheckKind(upcardIndex)) == (getRankValueForCheckKind(getStraightCards(), clubs.get(clubs.size() - 1)) + 1)) {
                         isStraight = true;
                     }
                 }
             }
         } else if (upcard.getSuit(upcardIndex) == 'd') {
-            if (getDiamondsStraightInHand() != null) {
-                for (int i = 0; i < getDiamondsStraightInHand().size(); i++) {
-                    if (upcard.getRankValueForCheckKind(upcardIndex) == getRankValueForCheckKind(getStraightCards(), getDiamondsStraightInHand().get(i).get(0)) - 1
-                            || upcard.getRankValue(upcardIndex) == getRankValueForCheckKind(getStraightCards(), getDiamondsStraightInHand().get(i).get(getDiamondsStraightInHand().get(i).size() - 1)) + 1) {
+            if (diamonds != null) {
+                for (int i = 0; i < diamonds.size(); i++) {
+                    if ((upcard.getRankValueForCheckKind(upcardIndex)) == (getRankValueForCheckKind(getStraightCards(), diamonds.get(0)) - 1)
+                            || (upcard.getRankValueForCheckKind(upcardIndex)) == (getRankValueForCheckKind(getStraightCards(), diamonds.get(diamonds.size() - 1)) + 1)) {
                         isStraight = true;
                     }
                 }
             }
         } else if (upcard.getSuit(upcardIndex) == 'h') {
-            if (getHeartsStraightInHand() != null) {
-                for (int i = 0; i < getHeartsStraightInHand().size(); i++) {
-                    if (upcard.getRankValueForCheckKind(upcardIndex) == getRankValueForCheckKind(getStraightCards(), getHeartsStraightInHand().get(i).get(0)) - 1
-                            || upcard.getRankValue(upcardIndex) == getRankValueForCheckKind(getStraightCards(), getHeartsStraightInHand().get(i).get(getHeartsStraightInHand().get(i).size() - 1)) + 1) {
+            if (hearts != null) {
+                for (int i = 0; i < hearts.size(); i++) {
+                    if ((upcard.getRankValueForCheckKind(upcardIndex)) == (getRankValueForCheckKind(getStraightCards(), hearts.get(0)) - 1)
+                            || (upcard.getRankValueForCheckKind(upcardIndex)) == (getRankValueForCheckKind(getStraightCards(), hearts.get(hearts.size() - 1)) + 1)) {
                         isStraight = true;
                     }
                 }
             }
         } else if (upcard.getSuit(upcardIndex) == 's') {
-            if (getSpadesStraightInHand() != null) {
-                for (int i = 0; i < getSpadesStraightInHand().size(); i++) {
-                    if (upcard.getRankValueForCheckKind(upcardIndex) == getRankValueForCheckKind(getStraightCards(), getSpadesStraightInHand().get(i).get(0)) - 1
-                            || upcard.getRankValue(upcardIndex) == getRankValueForCheckKind(getStraightCards(), getSpadesStraightInHand().get(i).get(getSpadesStraightInHand().get(i).size() - 1)) + 1) {
+            if (spades != null) {
+                for (int i = 0; i < spades.size(); i++) {
+                    if ((upcard.getRankValueForCheckKind(upcardIndex)) == (getRankValueForCheckKind(getStraightCards(), spades.get(0)) - 1)
+                            || (upcard.getRankValueForCheckKind(upcardIndex)) == (getRankValueForCheckKind(getStraightCards(), spades.get(spades.size() - 1)) + 1)) {
                         isStraight = true;
                     }
                 }
             }
         }
-
-        System.out.println("sameRank : " + sameRank);
-        System.out.println("hasStraight : " + hasStraight);
-        System.out.println("isFourth : " + isFourth);
-        System.out.println("isStraight : " + isStraight);
+        
         if (isFourth) {
             return 1; //keep in kind card
         } else if (isStraight) {
             return 2; //keep in straight
-        } else if (sameRank >= 2) {
+        } else if (sameRank
+                >= 2) {
             return 0;// keep in deadwood
-        } else if (hasStraight != null) {
+        } else if (hasStraight
+                != null) {
             if (!hasStraight.isEmpty()) {
                 return 0; // keep in deadwood
             }
@@ -176,84 +168,5 @@ public class Bot extends Player {
         }
         return duplicate.get(duplicate.size() - 1);
     }
-    
-     public void sortBotDeadwoodCards() {
-        
-        //sort card in deadwood card
-        sortCardsByRank(getDeadwoodCards());
 
-        //CHECK KIND
-        kindInHand = getKindIndex(addRankToIntArraylist(getDeadwoodCards()));
-
-        if (kindInHand != null) {
-            //add card from deadwood to kind observable list
-            for (int i = kindInHand.size() - 1; i >= 0; i--) {
-                for (int index = kindInHand.get(i).size() - 1; index >= 0; index--) {
-                    getKindCards().add(getDeadwoodCards().get(kindInHand.get(i).get(index)));
-                }
-            }
-            sortCardsByRank(getKindCards());
-        }
-
-        //CHECK STRAIGHT
-        addDeadwoodCardToOwnSuit();
-
-        //check straight in club
-        if (clubs.size() >= 3) {
-            clubsStraightInHand = getStraightIndex(addRankToIntArraylistByCompare(getDeadwoodCards(), clubs));
-            if (clubsStraightInHand != null) {
-                //add card from deadwood to kind observable list
-                for (int i = clubsStraightInHand.size() - 1; i >= 0; i--) {
-                    for (int index = clubsStraightInHand.get(i).size() - 1; index >= 0; index--) {
-                        getStraightCards().add(getDeadwoodCards().get(clubs.get(clubsStraightInHand.get(i).get(index))));
-                    }
-                }
-            }
-            addDeadwoodCardToOwnSuit();
-        }
-
-        //check straight in diamonds
-        if (diamonds.size() >= 3) {
-            diamondsStraightInHand = getStraightIndex(addRankToIntArraylistByCompare(getDeadwoodCards(), diamonds));
-            if (diamondsStraightInHand != null) {
-                //add card from deadwood to kind observable list
-                for (int i = diamondsStraightInHand.size() - 1; i >= 0; i--) {
-                    for (int index = diamondsStraightInHand.get(i).size() - 1; index >= 0; index--) {
-                        getStraightCards().add(getDeadwoodCards().get(diamonds.get(diamondsStraightInHand.get(i).get(index))));
-                    }
-                }
-            }
-            addDeadwoodCardToOwnSuit();
-        }
-
-        //check straight in hearts
-        if (hearts.size() >= 3) {
-            heartsStraightInHand = getStraightIndex(addRankToIntArraylistByCompare(getDeadwoodCards(), hearts));
-            if (heartsStraightInHand != null) {
-                //add card from deadwood to kind observable list
-                for (int i = heartsStraightInHand.size() - 1; i >= 0; i--) {
-                    for (int index = heartsStraightInHand.get(i).size() - 1; index >= 0; index--) {
-                        getStraightCards().add(getDeadwoodCards().get(hearts.get(heartsStraightInHand.get(i).get(index))));
-                    }
-                }
-            }
-            addDeadwoodCardToOwnSuit();
-        }
-
-        //check straight in spades
-        if (spades.size() >= 3) {
-            spadesStraightInHand = getStraightIndex(addRankToIntArraylistByCompare(getDeadwoodCards(), spades));
-            if (spadesStraightInHand != null) {
-                //add card from deadwood to kind observable list
-                for (int i = spadesStraightInHand.size() - 1; i >= 0; i--) {
-                    for (int index = spadesStraightInHand.get(i).size() - 1; index >= 0; index--) {
-                        getStraightCards().add(getDeadwoodCards().get(spades.get(spadesStraightInHand.get(i).get(index))));
-                    }
-                }
-            }
-            addDeadwoodCardToOwnSuit();
-        }
-        sortCardsForStraight(getStraightCards());
-        sortCardsByRank(getKindCards());
-    }
 }

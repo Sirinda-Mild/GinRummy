@@ -344,25 +344,8 @@ public class Player {
 
     public void sortDeadwoodCards() {
 
-        System.out.println("straight card now : " + straightCards);
-        System.out.println("kind card now : " + kindCards);
-        if (straightCards != null) {
-            for (int i = 0; i < straightCards.size(); i++) {
-//                System.out.println(i + "bf card add : " + deadwoodCards);
-                deadwoodCards.add(straightCards.get(i));
-                System.out.println(i + "af card add : " + deadwoodCards);
-            }
-            straightCards.clear();
-        }
-        if (kindCards != null) {
-            for (int i = 0; i < kindCards.size(); i++) {
-                deadwoodCards.add(kindCards.get(i));
-            }
-            kindCards.clear();
-        }
         //sort card in deadwood card
         sortCardsByRank(deadwoodCards);
-        System.out.println("merge card in deadwood and sort : " + deadwoodCards);
 
         //CHECK KIND
         kindInHand = getKindIndex(addRankToIntArraylist(deadwoodCards));
@@ -437,6 +420,77 @@ public class Player {
         }
         sortCardsForStraight(straightCards);
         sortCardsByRank(kindCards);
+    }
+
+    public int checkUpcardTake(UpCard upcard) {
+
+        int sameRank = 0;
+        boolean isFourth = false;
+        boolean isStraight = false;
+        ArrayList<ArrayList<Integer>> hasStraight = new ArrayList<ArrayList<Integer>>();
+        int upcardIndex = upcard.getSize() - 1;
+
+        //CHECK IF CARD CAN MELDS WITH ALREADY STRAIGHT OR KIND
+        //KIND
+        for (int i = 0; i < getKindCards().size(); i++) {
+            if ((upcard.getRank(upcardIndex) == getRank(getKindCards(), i))) {
+                isFourth = true;
+            }
+        }
+
+        //STRAIGHT 
+        addStraightCardToOwnSuit();
+        if (upcard.getSuit(upcardIndex) == 'c') {
+            if (clubs != null) {
+                for (int i = 0; i < clubs.size(); i++) {
+                    if ((upcard.getRankValueForCheckKind(upcardIndex)) == (getRankValueForCheckKind(getStraightCards(), clubs.get(0)) - 1)
+                            || (upcard.getRankValueForCheckKind(upcardIndex)) == (getRankValueForCheckKind(getStraightCards(), clubs.get(clubs.size() - 1)) + 1)) {
+                        isStraight = true;
+                    }
+                }
+            }
+        } else if (upcard.getSuit(upcardIndex) == 'd') {
+            if (diamonds != null) {
+                for (int i = 0; i < diamonds.size(); i++) {
+                    if ((upcard.getRankValueForCheckKind(upcardIndex)) == (getRankValueForCheckKind(getStraightCards(), diamonds.get(0)) - 1)
+                            || (upcard.getRankValueForCheckKind(upcardIndex)) == (getRankValueForCheckKind(getStraightCards(), diamonds.get(diamonds.size() - 1)) + 1)) {
+                        isStraight = true;
+                    }
+                }
+            }
+        } else if (upcard.getSuit(upcardIndex) == 'h') {
+            if (hearts != null) {
+                for (int i = 0; i < hearts.size(); i++) {
+                    if ((upcard.getRankValueForCheckKind(upcardIndex)) == (getRankValueForCheckKind(getStraightCards(), hearts.get(0)) - 1)
+                            || (upcard.getRankValueForCheckKind(upcardIndex)) == (getRankValueForCheckKind(getStraightCards(), hearts.get(hearts.size() - 1)) + 1)) {
+                        isStraight = true;
+                    }
+                }
+            }
+        } else if (upcard.getSuit(upcardIndex) == 's') {
+            if (spades != null) {
+                for (int i = 0; i < spades.size(); i++) {
+                    if ((upcard.getRankValueForCheckKind(upcardIndex)) == (getRankValueForCheckKind(getStraightCards(), spades.get(0)) - 1)
+                            || (upcard.getRankValueForCheckKind(upcardIndex)) == (getRankValueForCheckKind(getStraightCards(), spades.get(spades.size() - 1)) + 1)) {
+                        isStraight = true;
+                    }
+                }
+            }
+        }
+
+        if (isFourth) {
+            return 1; //keep in kind card
+        } else if (isStraight) {
+            return 2; //keep in straight
+        } else if (sameRank >= 2) {
+            return 0;// keep in deadwood
+        } else if (hasStraight != null) {
+            if (!hasStraight.isEmpty()) {
+                return 0; // keep in deadwood
+            }
+        }
+
+        return -1;
     }
 
     public ArrayList<ArrayList<Integer>> getClubsStraightInHand() {
