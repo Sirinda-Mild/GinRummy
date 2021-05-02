@@ -95,11 +95,6 @@ public class Player {
         return deadwood;
     }
 
-    public int Score() {
-        int score = 0;
-        return score;
-    }
-
     public int getDeadwoodSize() {
         return deadwoodCards.size();
     }

@@ -31,6 +31,7 @@ import javafx.scene.effect.Glow;
 import javafx.scene.image.Image;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
@@ -50,6 +51,8 @@ public class GinRummy extends Application {
     private Bot bot;
     private UpCard upcard;
     private DrawPile drawpile;
+    private int playerScoreInt = 0;
+    private int botScoreInt = 0;
 
     HBox playerCardsPane = new HBox(10);
     private Glow glow = new Glow();
@@ -65,25 +68,43 @@ public class GinRummy extends Application {
         Pane root = new Pane();
         root.setPrefSize(1000, 600);
 
-        Region background = new Region();
-        background.setPrefSize(1000, 600);
-        background.setStyle("-fx-background-color: rgba(0, 0, 0, 1)");
+        Rectangle InGameBG = new Rectangle(984, 562);
+        Image imgendInGameBG = new Image("resources/background/InGameBackground.jpg");
+        InGameBG.setFill(new ImagePattern(imgendInGameBG));
 
         //set end game background
-        Rectangle endBG = new Rectangle(1000, 600);
-        Image imgendBG = new Image("resources/background/endgame.png");
-        endBG.setFill(new ImagePattern(imgendBG));
+        Rectangle endBGLose = new Rectangle(984, 562);
+        Image imgendBGLose = new Image("resources/background/youLoseBackground.jpg");
+        endBGLose.setFill(new ImagePattern(imgendBGLose));
+
+        Rectangle endBGWin = new Rectangle(984, 562);
+        Image imgendBGWin = new Image("resources/background/youWinBackground.jpg");
+        endBGWin.setFill(new ImagePattern(imgendBGWin));
+
+        //BUTTON ALL
+        Rectangle buttonPass = new Rectangle(97, 40);
+        Image imgbuttonPass = new Image("resources/background/PASS_Button.png");
+        buttonPass.setFill(new ImagePattern(imgbuttonPass));
+
+        Rectangle buttonNew = new Rectangle(97, 40);
+        Image imgbuttonNew = new Image("resources/background/NEW_Button.png");
+        buttonNew.setFill(new ImagePattern(imgbuttonNew));
+
+        Rectangle buttonTake = new Rectangle(97, 40);
+        Image imgbuttonTake = new Image("resources/background/TAKE_Button.png");
+        buttonTake.setFill(new ImagePattern(imgbuttonTake));
+
+        Rectangle buttonEndround = new Rectangle(97, 40);
+        Image imgbuttonEndround = new Image("resources/background/END_TURN.png");
+        buttonEndround.setFill(new ImagePattern(imgbuttonEndround));
+
+        Rectangle buttonGin = new Rectangle(97, 40);
+        Image imgbuttonGin = new Image("resources/background/GIN_button.png");
+        buttonGin.setFill(new ImagePattern(imgbuttonGin));
 
         //set next pane
         StackPane rootLayout = new StackPane();
         rootLayout.setPadding(new Insets(5, 5, 5, 5));
-        Rectangle BG = new Rectangle(973, 550);
-        BG.setArcWidth(30);
-        BG.setArcHeight(30);
-        BG.setFill(Color.GREEN);
-
-        VBox vbox = new VBox(20);
-        vbox.setAlignment(Pos.CENTER);
 
         //set final pane        
         HBox botCardsPane = new HBox(10);
@@ -95,7 +116,7 @@ public class GinRummy extends Application {
         HBox playerStraightCardsPane = new HBox(10);
         HBox playerKindCardsPane = new HBox(10);
 
-        HBox drawCardsPane = new HBox(10);
+        HBox drawCardsPane = new HBox(100);
         StackPane upCardPilePane = new StackPane();
         StackPane drawPilePane = new StackPane();
         playerDeadwoodCardsPane.setPadding(new Insets(5, 5, 5, 5));
@@ -121,7 +142,7 @@ public class GinRummy extends Application {
         countDrawpile.setFill(Color.WHITE);
 
         drawCardsPane.setAlignment(Pos.CENTER);
-        drawCardsPane.getChildren().addAll(countDrawpile, drawPilePane, upCardPilePane);
+        drawCardsPane.getChildren().addAll(countDrawpile, upCardPilePane);
 
         //declare arraylist
         player = new Player(playerDeadwoodCardsPane.getChildren(), playerStraightCardsPane.getChildren(), playerKindCardsPane.getChildren());
@@ -132,10 +153,9 @@ public class GinRummy extends Application {
         botCardsPane.getChildren().addAll(botKindCardsPane, botStraightCardsPane, botDeadwoodCardsPane);
 
         //Bot Score
-        Text botScore = new Text("Dealer Score : ");
+        Text botScore = new Text("");
         botScore.setFont(Font.font("Tahoma", 18));
         botScore.setFill(Color.WHITE);
-
         Text passText = new Text("PASS");
         passText.setFont(Font.font("Tahoma", 40));
         passText.setFill(Color.YELLOW);
@@ -144,14 +164,8 @@ public class GinRummy extends Application {
 
         //Player Score
         HBox playerInfo = new HBox(30);
-        Text playerScore = new Text("Player Score : ");
-        Text playerDeadwood = new Text("Player Deadwood : ");
-        Text playerWin = new Text("You Win!");
-        Text botWin = new Text("You Lose!");
-        playerWin.setFont(Font.font("Tahoma", 25));
-        playerWin.setFill(Color.WHITE);
-        botWin.setFont(Font.font("Tahoma", 25));
-        botWin.setFill(Color.WHITE);
+        Text playerScore = new Text("");
+        Text playerDeadwood = new Text(" ");
         playerScore.setFont(Font.font("Tahoma", 18));
         playerScore.setFill(Color.WHITE);
 
@@ -159,48 +173,69 @@ public class GinRummy extends Application {
         playerDeadwood.setFill(Color.WHITE);
 
         playerInfo.setAlignment(Pos.CENTER);
-        playerInfo.getChildren().addAll(playerScore, playerDeadwood);
+        playerInfo.getChildren().addAll(playerDeadwood);
 
         //All button
         HBox buttonBox = new HBox(5);
         buttonBox.setPadding(new Insets(5, 5, 5, 5));
-        Button btnPass = new Button("PASS");
-        Button btnTake = new Button("TAKE");
-        Button btnNew = new Button("NEW");
-        Button btnDiscard = new Button("END TURN");
-        Button btnKnock = new Button("KNOCK");
 
         // ADD STACKS TO ROOT LAYOUT
-        buttonBox.getChildren().addAll(btnTake, btnPass);
+        buttonBox.getChildren().addAll(buttonTake, buttonPass);
         buttonBox.setAlignment(Pos.CENTER_RIGHT);
-        vbox.getChildren().addAll(botCardsPane, botScore, drawCardsPane, buttonBox, playerInfo, playerCardsPane);
-        rootLayout.getChildren().addAll(new StackPane(BG), new StackPane(vbox));
-        root.getChildren().addAll(background, rootLayout);
+
+        drawCardsPane.setLayoutX(402);
+        drawCardsPane.setLayoutY(230);
+
+        playerCardsPane.setLayoutX(20);
+        playerCardsPane.setLayoutY(430);
+
+        buttonBox.setLayoutX(749);
+        buttonBox.setLayoutY(317);
+
+        playerInfo.setLayoutX(550);
+        playerInfo.setLayoutY(380);
+
+        root.getChildren().addAll(InGameBG, drawCardsPane, buttonBox, playerInfo, playerCardsPane);
 
         // INIT BUTTONS
         //BUTTON DISCARD
-        btnDiscard.setOnAction(event -> {
+        buttonEndround.setOnMousePressed(event -> {
             botAction();
 
             //change button pass to new
-            buttonBox.getChildren().remove(btnDiscard);
-            buttonBox.getChildren().remove(btnKnock);
-            buttonBox.getChildren().add(btnTake);
-            buttonBox.getChildren().add(btnNew);
+            buttonBox.getChildren().remove(buttonEndround);
+            buttonBox.getChildren().add(buttonTake);
+            buttonBox.getChildren().add(buttonNew);
 
             //sort card
             player.sortDeadwoodCards();
             bot.sortDeadwoodCards();
 
+            player.Deadwood();
+            bot.Deadwood();
+
+            playerDropCard();
+            if (bot.Deadwood() <= 10) {
+                
+                playerScore.setLayoutX(276);
+                playerScore.setLayoutX(426);
+                botScore.setLayoutX(600);
+                botScore.setLayoutX(426);
+
+                playerScore.textProperty().bind(new SimpleStringProperty("").concat(Integer.toString(player.Deadwood())));
+                botScore.textProperty().bind(new SimpleStringProperty("").concat(Integer.toString(bot.Deadwood())));
+                root.getChildren().add(endBGLose);
+                root.getChildren().add(playerScore);
+                root.getChildren().add(botScore);
+            }
+
             //Score 
-            playerScore.textProperty().bind(new SimpleStringProperty("Player Score : ").concat(Integer.toString(player.Score())));
-            playerDeadwood.textProperty().bind(new SimpleStringProperty("Player Deadwood : ").concat(Integer.toString(player.Deadwood())));
-            botScore.textProperty().bind(new SimpleStringProperty("Dealer Score : ").concat(Integer.toString(bot.Deadwood())));
+            playerDeadwood.textProperty().bind(new SimpleStringProperty("").concat(Integer.toString(player.Deadwood())));
             countDrawpile.textProperty().bind(new SimpleStringProperty("").concat(Integer.toString(drawpile.getSize())));
         });
 
         //BUTTON TAKE
-        btnTake.setOnAction(event -> {
+        buttonTake.setOnMousePressed(event -> {
             firstPass = true;
             playerActionTake();
             isTake = true;
@@ -209,36 +244,28 @@ public class GinRummy extends Application {
             bot.Deadwood();
 
             //change button take to discard
-            buttonBox.getChildren().remove(btnPass);
-            buttonBox.getChildren().remove(btnTake);
-            buttonBox.getChildren().remove(btnNew);
-            buttonBox.getChildren().add(btnDiscard);
-            buttonBox.getChildren().add(btnKnock);
+            buttonBox.getChildren().remove(buttonPass);
+            buttonBox.getChildren().remove(buttonTake);
+            buttonBox.getChildren().remove(buttonNew);
+            buttonBox.getChildren().add(buttonEndround);
             if (player.Deadwood() <= 10) {
-                btnKnock.setDisable(false);
+                buttonBox.getChildren().add(buttonGin);
             }
 
             playerDropCard();
-            if (bot.Deadwood() <= 10) {
-                System.out.println("end game laew jaa");
-                root.getChildren().add(endBG);
-                root.getChildren().add(botWin);
-            }
+
             //sort card
             player.sortDeadwoodCards();
-            System.out.println("after sort : " + player.getDeadwoodCards());
             bot.sortDeadwoodCards();
 
             //Score 
-            playerScore.textProperty().bind(new SimpleStringProperty("Player Score : ").concat(Integer.toString(player.Score())));
-            playerDeadwood.textProperty().bind(new SimpleStringProperty("Player Deadwood : ").concat(Integer.toString(player.Deadwood())));
-            botScore.textProperty().bind(new SimpleStringProperty("Dealer Score : ").concat(Integer.toString(bot.Deadwood())));
+            playerDeadwood.textProperty().bind(new SimpleStringProperty("").concat(Integer.toString(player.Deadwood())));
             countDrawpile.textProperty().bind(new SimpleStringProperty("").concat(Integer.toString(drawpile.getSize())));
 
         });
 
         //BUTTON PASS
-        btnPass.setOnAction(event -> {
+        buttonPass.setOnMousePressed(event -> {
             botAction();
             if (botPass) {
                 root.getChildren().add(passText);
@@ -246,22 +273,20 @@ public class GinRummy extends Application {
             firstPass = true;
 
             //change button pass to new
-            buttonBox.getChildren().remove(btnPass);
-            buttonBox.getChildren().add(btnNew);
+            buttonBox.getChildren().remove(buttonPass);
+            buttonBox.getChildren().add(buttonNew);
 
             //sort card
             player.sortDeadwoodCards();
             bot.sortDeadwoodCards();
 
             //Score 
-            playerScore.textProperty().bind(new SimpleStringProperty("Player Score : ").concat(Integer.toString(player.Score())));
-            playerDeadwood.textProperty().bind(new SimpleStringProperty("Player Deadwood : ").concat(Integer.toString(player.Deadwood())));
-            botScore.textProperty().bind(new SimpleStringProperty("Dealer Score : ").concat(Integer.toString(bot.Deadwood())));
+            playerDeadwood.textProperty().bind(new SimpleStringProperty("").concat(Integer.toString(player.Deadwood())));
             countDrawpile.textProperty().bind(new SimpleStringProperty("").concat(Integer.toString(drawpile.getSize())));
         });
 
         //BUTTON NEW
-        btnNew.setOnAction(event -> {
+        buttonNew.setOnMousePressed(event -> {
             playerActionNew();
             root.getChildren().remove(passText);
             isTake = true;
@@ -270,47 +295,52 @@ public class GinRummy extends Application {
             bot.Deadwood();
 
             //change button take to discard
-            buttonBox.getChildren().remove(btnTake);
-            buttonBox.getChildren().remove(btnNew);
-            buttonBox.getChildren().add(btnDiscard);
-            buttonBox.getChildren().add(btnKnock);
+            buttonBox.getChildren().remove(buttonPass);
+            buttonBox.getChildren().remove(buttonTake);
+            buttonBox.getChildren().remove(buttonNew);
+            buttonBox.getChildren().add(buttonEndround);
             if (player.Deadwood() <= 10) {
-                btnKnock.setDisable(false);
+                buttonBox.getChildren().add(buttonGin);
             }
 
+            playerDropCard();
             //sort card
             player.sortDeadwoodCards();
             bot.sortDeadwoodCards();
 
-            playerDropCard();
-            if (bot.Deadwood() <= 10) {
-                System.out.println("end game laew jaa");
-                root.getChildren().add(endBG);
-                root.getChildren().add(botWin);
-            }
             //Score 
-            playerScore.textProperty().bind(new SimpleStringProperty("Player Score : ").concat(Integer.toString(player.Score())));
-            playerDeadwood.textProperty().bind(new SimpleStringProperty("Player Deadwood : ").concat(Integer.toString(player.Deadwood())));
-            botScore.textProperty().bind(new SimpleStringProperty("Dealer Score : ").concat(Integer.toString(bot.Deadwood())));
+            playerDeadwood.textProperty().bind(new SimpleStringProperty("").concat(Integer.toString(player.Deadwood())));
             countDrawpile.textProperty().bind(new SimpleStringProperty("").concat(Integer.toString(drawpile.getSize())));
 
         });
 
-        //BUTTON KNOCK
-        btnKnock.setOnAction(event -> {
-            root.getChildren().add(endBG);
-            root.getChildren().add(playerWin);
+        //BUTTON GIN
+        buttonGin.setOnMousePressed(event -> {
+            if (player.Deadwood() < bot.Deadwood()) {
+                playerScoreInt = bot.Deadwood() - player.Deadwood();
+                botScoreInt = 0;
+                playerScore.textProperty().bind(new SimpleStringProperty("").concat(Integer.toString(player.Deadwood())));
+                botScore.textProperty().bind(new SimpleStringProperty("").concat(Integer.toString(bot.Deadwood())));
+                root.getChildren().add(endBGWin);
+                root.getChildren().add(playerScore);
+                root.getChildren().add(botScore);
+            } else {
+                playerScoreInt = 0;
+                botScoreInt = player.Deadwood() - bot.Deadwood();
+                playerScore.textProperty().bind(new SimpleStringProperty("").concat(Integer.toString(player.Deadwood())));
+                botScore.textProperty().bind(new SimpleStringProperty("").concat(Integer.toString(bot.Deadwood())));
+                root.getChildren().add(endBGLose);
+                root.getChildren().add(playerScore);
+                root.getChildren().add(botScore);
+            }
         });
 
         startNewGame();
         player.sortDeadwoodCards();
         bot.sortDeadwoodCards();
-        btnKnock.setDisable(true);
 
         //Score 
-        playerScore.textProperty().bind(new SimpleStringProperty("Player Score : ").concat(Integer.toString(player.Score())));
-        playerDeadwood.textProperty().bind(new SimpleStringProperty("Player Deadwood : ").concat(Integer.toString(player.Deadwood())));
-        botScore.textProperty().bind(new SimpleStringProperty("Dealer Score : ").concat(Integer.toString(bot.Deadwood())));
+        playerDeadwood.textProperty().bind(new SimpleStringProperty("").concat(Integer.toString(player.Deadwood())));
         countDrawpile.textProperty().bind(new SimpleStringProperty("").concat(Integer.toString(drawpile.getSize())));
 
         return root;
@@ -406,50 +436,6 @@ public class GinRummy extends Application {
 
             });
         }
-        //choose straight card to drop
-        for (int i = 0; i < player.getStraightCards().size(); i++) {
-            final int index = i;
-            player.getStraightCardNode(i).setOnMouseClicked(event -> {
-                final int selectedIndex = index;
-                event.consume();
-                if (isTake == true) {
-                    upcard.keepCard((Card) player.getStraightCardNode(index));
-                    isTake = false;
-                }
-            });
-            player.getStraightCardNode(i).setOnMouseEntered(event -> {
-                final int selectedIndex = index;
-                event.consume();
-                player.getStraightCardNode(index).setEffect(dropshadow);
-            });
-            player.getStraightCardNode(i).setOnMouseExited(event -> {
-                final int selectedIndex = index;
-                event.consume();
-                player.getStraightCardNode(index).setEffect(null);
-            });
-        }
-
-        //choose kind card to drop
-        for (int i = 0; i < player.getKindCards().size(); i++) {
-            final int index = i;
-            player.getKindCardNode(i).setOnMouseClicked(event -> {
-                final int selectedIndex = index;
-                if (isTake == true) {
-                    upcard.keepCard((Card) player.getStraightCardNode(index));
-                    isTake = false;
-                }
-            });
-            player.getKindCardNode(i).setOnMouseEntered(event -> {
-                final int selectedIndex = index;
-                event.consume();
-                player.getKindCardNode(index).setEffect(dropshadow);
-            });
-            player.getKindCardNode(i).setOnMouseExited(event -> {
-                final int selectedIndex = index;
-                event.consume();
-                player.getKindCardNode(index).setEffect(null);
-            });
-        }
     }
 
     private void startNewGame() {
@@ -458,26 +444,6 @@ public class GinRummy extends Application {
         bot.reset();
         player.reset();
 
-//        bot.takeDeadwoodCard(new Card("h","2"));
-//        bot.takeDeadwoodCard(new Card("h","3"));
-//        bot.takeDeadwoodCard(new Card("s","2"));
-//        bot.takeDeadwoodCard(new Card("c","m"));
-//        bot.takeDeadwoodCard(new Card("c","n"));
-//        bot.takeDeadwoodCard(new Card("c","7"));
-//        bot.takeDeadwoodCard(new Card("h","4"));
-//        bot.takeDeadwoodCard(new Card("h","5"));
-//        bot.takeDeadwoodCard(new Card("c","o"));
-//        bot.takeDeadwoodCard(new Card("d","8"));
-//        player.takeDeadwoodCard(new Card("h", "1"));
-//        player.takeDeadwoodCard(new Card("h", "2"));
-//        player.takeDeadwoodCard(new Card("s", "2"));
-//        player.takeDeadwoodCard(new Card("d", "p"));
-//        player.takeDeadwoodCard(new Card("h", "3"));
-//        player.takeDeadwoodCard(new Card("s", "p"));
-//        player.takeDeadwoodCard(new Card("h", "8"));
-//        player.takeDeadwoodCard(new Card("d", "6"));
-//        player.takeDeadwoodCard(new Card("c", "o"));
-//        player.takeDeadwoodCard(new Card("d", "o"));
         //player and bot draw card
         for (int i = 0; i < 10; i++) {
             player.takeDeadwoodCard(deck.drawCard());
@@ -491,7 +457,6 @@ public class GinRummy extends Application {
 
         //open top card
         upcard.keepCard(deck.drawCard());
-//        upcard.keepCard(new Card("h", "6"));
     }
 
     @Override
