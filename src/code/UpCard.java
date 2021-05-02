@@ -39,6 +39,10 @@ public class UpCard {
     public char getRank(int index) {
         return cards.get(index).toString().charAt(0);
     }
+    
+    public Node getNode(int index){
+        return cards.get(index);
+    }
 
     public int getRankValue(int index) {
         int cardValue = 0;
