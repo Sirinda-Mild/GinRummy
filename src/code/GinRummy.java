@@ -194,6 +194,7 @@ public class GinRummy extends Application {
 
         //BUTTON TAKE
         btnTake.setOnAction(event -> {
+            firstPass = true;
             player.takeDeadwoodCard((Card) upcard.drawCard());
             root.getChildren().remove(passText);
 //            isTake = true;
@@ -276,13 +277,14 @@ public class GinRummy extends Application {
         bot.sortDeadwoodCards();
 
         playerDropCard();
-        
+
         //Score 
         playerScore.textProperty().bind(new SimpleStringProperty("Player Score : ").concat(Integer.toString(player.Score())));
         playerDeadwood.textProperty().bind(new SimpleStringProperty("Player Deadwood : ").concat(Integer.toString(player.Deadwood())));
         botScore.textProperty().bind(new SimpleStringProperty("Dealer Score : ").concat(Integer.toString(bot.Deadwood())));
 
         if (bot.Deadwood() <= 10) {
+            System.out.println("end game laew jaa");
             root.getChildren().add(endBG);
             root.getChildren().add(botWin);
         }
@@ -292,7 +294,7 @@ public class GinRummy extends Application {
 
     public void botAction() {
         botTurn = bot.botAction(upcard);
-        System.out.println("BOT ACTION :: BOT TURN" + botTurn);
+        System.out.println("BOT ACTION :: BOT TURN :: " + botTurn);
         //bot take card from upcard pile
         if (botTurn == 0) {
             bot.takeDeadwoodCard((Card) upcard.drawCard());
@@ -315,6 +317,7 @@ public class GinRummy extends Application {
                 botPass = true;
             }
         }
+        bot.Deadwood();
     }
 
     public void playerDropCard() {
@@ -382,6 +385,16 @@ public class GinRummy extends Application {
         bot.reset();
         player.reset();
 
+//        bot.takeDeadwoodCard(new Card("h","1"));
+//        bot.takeDeadwoodCard(new Card("h","2"));
+//        bot.takeDeadwoodCard(new Card("s","2"));
+//        bot.takeDeadwoodCard(new Card("d","p"));
+//        bot.takeDeadwoodCard(new Card("h","p"));
+//        bot.takeDeadwoodCard(new Card("s","p"));
+//        bot.takeDeadwoodCard(new Card("h","5"));
+//        bot.takeDeadwoodCard(new Card("d","6"));
+//        bot.takeDeadwoodCard(new Card("c","o"));
+//        bot.takeDeadwoodCard(new Card("d","o"));
         //player and bot draw card
         for (int i = 0; i < 10; i++) {
             player.takeDeadwoodCard(deck.drawCard());
@@ -395,7 +408,7 @@ public class GinRummy extends Application {
 
         //open top card
         upcard.keepCard(deck.drawCard());
-//        upcard.keepCard(new Card("h", "6"));
+//        upcard.keepCard(new Card("h", "3"));
     }
 
     @Override

@@ -420,6 +420,7 @@ public class Player {
             addDeadwoodCardToOwnSuit();
         }
         sortCardsForStraight(straightCards);
+        sortCardsByRank(kindCards);
     }
 
     public ArrayList<ArrayList<Integer>> getClubsStraightInHand() {

@@ -40,25 +40,33 @@ public class Bot extends Player {
         if (upcard.getSuit(upcardIndex) == 'c') {
 
             ArrayList<Integer> clubsNew = addRankToIntArraylistByCompare(getDeadwoodCards(), clubs);
+            System.out.println("CLUB array :: " + clubsNew);
             clubsNew.add(upcard.getRankValue(upcardIndex));
+            Collections.sort(clubsNew);
             hasStraight = getStraightIndex(clubsNew);
 
         } else if (getDeadwoodSuit(upcardIndex) == 'd') {
 
             ArrayList<Integer> diamondsNew = addRankToIntArraylistByCompare(getDeadwoodCards(), diamonds);
+            System.out.println("DIAMOND array :: " + diamondsNew);
             diamondsNew.add(upcard.getRankValue(upcardIndex));
+            Collections.sort(diamondsNew);
             hasStraight = getStraightIndex(diamondsNew);
 
         } else if (getDeadwoodSuit(upcardIndex) == 'h') {
 
             ArrayList<Integer> heartsNew = addRankToIntArraylistByCompare(getDeadwoodCards(), hearts);
+            System.out.println("HEART array :: " + heartsNew);
             heartsNew.add(upcard.getRankValue(upcardIndex));
+            Collections.sort(heartsNew);
             hasStraight = getStraightIndex(heartsNew);
 
         } else if (getDeadwoodSuit(upcardIndex) == 's') {
 
             ArrayList<Integer> spadesNew = addRankToIntArraylistByCompare(getDeadwoodCards(), spades);
+            System.out.println("SPADE array :: " + spadesNew);
             spadesNew.add(upcard.getRankValue(upcardIndex));
+            Collections.sort(spadesNew);
             hasStraight = getStraightIndex(spadesNew);
 
         }
@@ -111,12 +119,18 @@ public class Bot extends Player {
             }
         }
 
-        if (sameRank >= 2 || hasStraight != null) {
-            return 0; // keep in deadwood
-        } else if (isFourth) {
+        System.out.println("sameRank : " + sameRank);
+        System.out.println("hasStraight : " + hasStraight);
+        System.out.println("isFourth : " + isFourth);
+        System.out.println("isStraight : " + isStraight);
+        if (isFourth) {
             return 1; //keep in kind card
         } else if (isStraight) {
             return 2; //keep in straight
+        } else if (sameRank >= 2 || hasStraight != null) {
+            if (!hasStraight.isEmpty() || sameRank >= 2) {
+                return 0; // keep in deadwood
+            }
         }
 
         return -1;
