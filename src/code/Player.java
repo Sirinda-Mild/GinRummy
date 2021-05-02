@@ -65,10 +65,18 @@ public class Player {
         deadwoodCards.get(index).toBack();
     }
 
-    public Node getDeadwoodNode(int index) {
+    public Node getDeadwoodCardNode(int index) {
         return deadwoodCards.get(index);
     }
 
+    public Node getStraightCardNode(int index) {
+        return straightCards.get(index);
+    }
+    
+    public Node getKindCardNode(int index) {
+        return kindCards.get(index);
+    }
+    
     public Node DropDeadwoodCard(int index) {
         Node card = deadwoodCards.get(index);
         deadwoodCards.remove(index);
@@ -288,11 +296,9 @@ public class Player {
             cardSorted.add(card.get(i).toString());
         }
         Collections.sort(cardSorted);
-        System.out.println(cardSorted);
         Collections.sort(cardSorted, (String a, String b) -> {
             return Character.toString(a.charAt(1)).compareTo(Character.toString((b.charAt(1))));
         });
-        System.out.println(cardSorted);
         for (int i = 0, j = cardSorted.size() - 1; j >= 0 && i < card.size(); i++) {
             if (card.get(i).toString().equals(cardSorted.get(j))) {
                 card.get(i).toBack();

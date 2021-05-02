@@ -73,33 +73,40 @@ public class Bot extends Player {
 
         //STRAIGHT 
         addStraightCardToOwnSuit();
-        System.out.println("hearts : " + getHeartsStraightInHand());
         if (upcard.getSuit(upcardIndex) == 'c') {
-            for (int i = 0; i < getClubsStraightInHand().size(); i++) {
-                if (upcard.getRankValueForCheckKind(upcardIndex) == (getRankValueForCheckKind(getStraightCards(), getClubsStraightInHand().get(i).get(0)) - 1)
-                        || upcard.getRankValue(upcardIndex) == getRankValueForCheckKind(getStraightCards(), getClubsStraightInHand().get(i).get(getClubsStraightInHand().get(i).size() - 1)) + 1) {
-                    isStraight = true;
+            if (getClubsStraightInHand() != null) {
+                for (int i = 0; i < getClubsStraightInHand().size(); i++) {
+                    if (upcard.getRankValueForCheckKind(upcardIndex) == (getRankValueForCheckKind(getStraightCards(), getClubsStraightInHand().get(i).get(0)) - 1)
+                            || upcard.getRankValue(upcardIndex) == getRankValueForCheckKind(getStraightCards(), getClubsStraightInHand().get(i).get(getClubsStraightInHand().get(i).size() - 1)) + 1) {
+                        isStraight = true;
+                    }
                 }
             }
         } else if (upcard.getSuit(upcardIndex) == 'd') {
-            for (int i = 0; i < getDiamondsStraightInHand().size(); i++) {
-                if (upcard.getRankValueForCheckKind(upcardIndex) == getRankValueForCheckKind(getStraightCards(), getDiamondsStraightInHand().get(i).get(0)) - 1
-                        || upcard.getRankValue(upcardIndex) == getRankValueForCheckKind(getStraightCards(), getDiamondsStraightInHand().get(i).get(getDiamondsStraightInHand().get(i).size() - 1)) + 1) {
-                    isStraight = true;
+            if (getDiamondsStraightInHand() != null) {
+                for (int i = 0; i < getDiamondsStraightInHand().size(); i++) {
+                    if (upcard.getRankValueForCheckKind(upcardIndex) == getRankValueForCheckKind(getStraightCards(), getDiamondsStraightInHand().get(i).get(0)) - 1
+                            || upcard.getRankValue(upcardIndex) == getRankValueForCheckKind(getStraightCards(), getDiamondsStraightInHand().get(i).get(getDiamondsStraightInHand().get(i).size() - 1)) + 1) {
+                        isStraight = true;
+                    }
                 }
             }
         } else if (upcard.getSuit(upcardIndex) == 'h') {
-            for (int i = 0; i < getHeartsStraightInHand().size(); i++) {
-                if (upcard.getRankValueForCheckKind(upcardIndex) == getRankValueForCheckKind(getStraightCards(), getHeartsStraightInHand().get(i).get(0)) - 1
-                        || upcard.getRankValue(upcardIndex) == getRankValueForCheckKind(getStraightCards(), getHeartsStraightInHand().get(i).get(getHeartsStraightInHand().get(i).size() - 1)) + 1) {
-                    isStraight = true;
+            if (getHeartsStraightInHand() != null) {
+                for (int i = 0; i < getHeartsStraightInHand().size(); i++) {
+                    if (upcard.getRankValueForCheckKind(upcardIndex) == getRankValueForCheckKind(getStraightCards(), getHeartsStraightInHand().get(i).get(0)) - 1
+                            || upcard.getRankValue(upcardIndex) == getRankValueForCheckKind(getStraightCards(), getHeartsStraightInHand().get(i).get(getHeartsStraightInHand().get(i).size() - 1)) + 1) {
+                        isStraight = true;
+                    }
                 }
             }
         } else if (upcard.getSuit(upcardIndex) == 's') {
-            for (int i = 0; i < getSpadesStraightInHand().size(); i++) {
-                if (upcard.getRankValueForCheckKind(upcardIndex) == getRankValueForCheckKind(getStraightCards(), getSpadesStraightInHand().get(i).get(0)) - 1
-                        || upcard.getRankValue(upcardIndex) == getRankValueForCheckKind(getStraightCards(), getSpadesStraightInHand().get(i).get(getSpadesStraightInHand().get(i).size() - 1)) + 1) {
-                    isStraight = true;
+            if (getDiamondsStraightInHand() != null) {
+                for (int i = 0; i < getSpadesStraightInHand().size(); i++) {
+                    if (upcard.getRankValueForCheckKind(upcardIndex) == getRankValueForCheckKind(getStraightCards(), getSpadesStraightInHand().get(i).get(0)) - 1
+                            || upcard.getRankValue(upcardIndex) == getRankValueForCheckKind(getStraightCards(), getSpadesStraightInHand().get(i).get(getSpadesStraightInHand().get(i).size() - 1)) + 1) {
+                        isStraight = true;
+                    }
                 }
             }
         }

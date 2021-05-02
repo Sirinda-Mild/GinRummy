@@ -24,6 +24,8 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.effect.BlurType;
+import javafx.scene.effect.DropShadow;
 import javafx.scene.effect.Effect;
 import javafx.scene.effect.Glow;
 import javafx.scene.image.Image;
@@ -51,12 +53,12 @@ public class GinRummy extends Application {
 
     HBox playerCardsPane = new HBox(10);
     private Glow glow = new Glow();
+    private DropShadow dropshadow = new DropShadow(BlurType.ONE_PASS_BOX, Color.BLACK, 10, 10, 3, 3);
     private boolean firstPass = false;
-    private boolean botTurn = false;
+    private int botTurn = -1;
     private boolean isTake = false;
 
     private Parent createGame() {
-        System.out.println("creatgame laewja");
         //set main pane
         Pane root = new Pane();
         root.setPrefSize(1000, 600);
@@ -64,6 +66,11 @@ public class GinRummy extends Application {
         Region background = new Region();
         background.setPrefSize(1000, 600);
         background.setStyle("-fx-background-color: rgba(0, 0, 0, 1)");
+
+        //set end game background
+        Rectangle endBG = new Rectangle(1000, 600);
+        Image imgendBG = new Image("resources/background/endgame.png");
+        endBG.setFill(new ImagePattern(imgendBG));
 
         //set next pane
         StackPane rootLayout = new StackPane();
@@ -133,6 +140,12 @@ public class GinRummy extends Application {
         HBox playerInfo = new HBox(30);
         Text playerScore = new Text("Player Score : ");
         Text playerDeadwood = new Text("Player Deadwood : ");
+        Text playerWin = new Text("You Win!");
+        Text botWin = new Text("You Lose!");
+        playerWin.setFont(Font.font("Tahoma", 25));
+        playerWin.setFill(Color.WHITE);
+        botWin.setFont(Font.font("Tahoma", 25));
+        botWin.setFill(Color.WHITE);
         playerScore.setFont(Font.font("Tahoma", 18));
         playerScore.setFill(Color.WHITE);
 
@@ -159,11 +172,12 @@ public class GinRummy extends Application {
         root.getChildren().addAll(background, rootLayout);
 
         // INIT BUTTONS
-        btnTake.setOnAction(event -> {
-            player.takeDeadwoodCard((Card) upcard.drawCard());
-            if (firstPass == true) {
-                root.getChildren().remove(passText);
-            }
+        btnDiscard.setOnAction(event -> {
+            botAction();
+            //change button pass to new
+            buttonBox.getChildren().remove(btnDiscard);
+            buttonBox.getChildren().add(btnTake);
+            buttonBox.getChildren().add(btnNew);
 
             //sort card
             player.sortDeadwoodCards();
@@ -175,22 +189,33 @@ public class GinRummy extends Application {
             botScore.textProperty().bind(new SimpleStringProperty("Dealer Score : ").concat(Integer.toString(bot.Deadwood())));
         });
 
-        btnPass.setOnAction(event -> {
-            if (bot.botAction(upcard) == 0) {
-                bot.takeDeadwoodCard((Card) upcard.drawCard());
-                bot.sortDeadwoodCards();
-                upcard.keepCard((Card) bot.botDropCard());
-            } else if (bot.botAction(upcard) == 1) {
-                bot.takeKindCard((Card) upcard.drawCard());
-                bot.sortDeadwoodCards();
-                upcard.keepCard((Card) bot.botDropCard());
-            } else if (bot.botAction(upcard) == 2) {
-                bot.takeStraightCard((Card) upcard.drawCard());
-                bot.sortDeadwoodCards();
-                upcard.keepCard((Card) bot.botDropCard());
-            } else {
-                root.getChildren().add(passText);
+        btnTake.setOnAction(event -> {
+            player.takeDeadwoodCard((Card) upcard.drawCard());
+            root.getChildren().remove(passText);
+//            isTake = true;
+
+            //change button take to discard
+            buttonBox.getChildren().remove(btnPass);
+            buttonBox.getChildren().remove(btnTake);
+            buttonBox.getChildren().add(btnDiscard);
+            if (player.Deadwood() <= 10) {
+                buttonBox.getChildren().add(btnKnock);
             }
+
+            //sort card
+            player.sortDeadwoodCards();
+            bot.sortDeadwoodCards();
+
+            //Score 
+            playerScore.textProperty().bind(new SimpleStringProperty("Player Score : ").concat(Integer.toString(player.Score())));
+            playerDeadwood.textProperty().bind(new SimpleStringProperty("Player Deadwood : ").concat(Integer.toString(player.Deadwood())));
+            botScore.textProperty().bind(new SimpleStringProperty("Dealer Score : ").concat(Integer.toString(bot.Deadwood())));
+
+        });
+
+        btnPass.setOnAction(event -> {
+            botAction();
+
             //change button pass to new
             buttonBox.getChildren().remove(btnPass);
             buttonBox.getChildren().add(btnNew);
@@ -207,46 +232,129 @@ public class GinRummy extends Application {
 
         btnNew.setOnAction(event -> {
             player.takeDeadwoodCard((Card) drawpile.drawCard());
-            if (firstPass == true) {
-                root.getChildren().remove(passText);
+            root.getChildren().remove(passText);
+
+            //change button take to discard
+            buttonBox.getChildren().remove(btnPass);
+            buttonBox.getChildren().remove(btnTake);
+            buttonBox.getChildren().add(btnDiscard);
+            if (player.Deadwood() <= 10) {
+                buttonBox.getChildren().add(btnKnock);
             }
 
             //sort card
             player.sortDeadwoodCards();
             bot.sortDeadwoodCards();
 
+            playerDropCard();
             //Score 
             playerScore.textProperty().bind(new SimpleStringProperty("Player Score : ").concat(Integer.toString(player.Score())));
             playerDeadwood.textProperty().bind(new SimpleStringProperty("Player Deadwood : ").concat(Integer.toString(player.Deadwood())));
             botScore.textProperty().bind(new SimpleStringProperty("Dealer Score : ").concat(Integer.toString(bot.Deadwood())));
+
+        });
+
+        btnKnock.setOnAction(event -> {
+            root.getChildren().add(endBG);
+            root.getChildren().add(playerWin);
         });
 
         startNewGame();
         player.sortDeadwoodCards();
         bot.sortDeadwoodCards();
-        playerDropCard();
 
+        playerDropCard();
         //Score 
         playerScore.textProperty().bind(new SimpleStringProperty("Player Score : ").concat(Integer.toString(player.Score())));
         playerDeadwood.textProperty().bind(new SimpleStringProperty("Player Deadwood : ").concat(Integer.toString(player.Deadwood())));
         botScore.textProperty().bind(new SimpleStringProperty("Dealer Score : ").concat(Integer.toString(bot.Deadwood())));
 
+        if (bot.Deadwood() <= 10) {
+            root.getChildren().add(endBG);
+            root.getChildren().add(botWin);
+        }
+        
         return root;
     }
 
+    public void botAction() {
+        botTurn = bot.botAction(upcard);
+        if (botTurn == -1) {
+            bot.takeDeadwoodCard((Card) upcard.drawCard());
+            bot.sortDeadwoodCards();
+            upcard.keepCard((Card) bot.botDropCard());
+        } else if (botTurn == 1) {
+            bot.takeKindCard((Card) upcard.drawCard());
+            bot.sortDeadwoodCards();
+            upcard.keepCard((Card) bot.botDropCard());
+        } else if (botTurn == 2) {
+            bot.takeStraightCard((Card) upcard.drawCard());
+            bot.sortDeadwoodCards();
+            upcard.keepCard((Card) bot.botDropCard());
+        } else {
+            bot.takeDeadwoodCard((Card) drawpile.drawCard());
+            bot.sortDeadwoodCards();
+            upcard.keepCard((Card) bot.botDropCard());
+        }
+    }
+
     public void playerDropCard() {
+        //choose deadwood card to drop
+        player.sortDeadwoodCards();
         for (int i = 0; i < player.getDeadwoodSize(); i++) {
             final int index = i;
-            player.getDeadwoodNode(i).addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
-                @Override
-                public void handle(MouseEvent event) {
-                    final int selectedIndex = index;
-                    event.consume();
-                    System.out.println(selectedIndex);
-                    upcard.keepCard((Card) player.getDeadwoodNode(index));
-                }
+            player.getDeadwoodCardNode(i).setOnMouseClicked(event -> {
+                final int selectedIndex = index;
+                event.consume();
+                upcard.keepCard((Card) player.getDeadwoodCardNode(index));
+            });
+            player.getDeadwoodCardNode(i).setOnMouseEntered(event -> {
+                final int selectedIndex = index;
+                player.getDeadwoodCardNode(index).setEffect(dropshadow);
+            });
+            player.getDeadwoodCardNode(i).setOnMouseExited(event -> {
+                final int selectedIndex = index;
+                player.getDeadwoodCardNode(index).setEffect(null);
             });
         }
+        //BUGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG 
+//        //choose straight card to drop
+//        for (int i = 0; i < player.getStraightCards().size(); i++) {
+//            final int index = i;
+//            player.getStraightCardNode(i).setOnMouseClicked(event -> {
+//                final int selectedIndex = index;
+//                event.consume();
+//                upcard.keepCard((Card) player.getStraightCardNode(index));
+//                botAction();
+//            });
+//            player.getStraightCardNode(i).setOnMouseEntered(event -> {
+//                final int selectedIndex = index;
+//                player.getStraightCardNode(index).setEffect(dropshadow);
+//            });
+//            player.getStraightCardNode(i).setOnMouseExited(event -> {
+//                final int selectedIndex = index;
+//                player.getStraightCardNode(index).setEffect(null);
+//            });
+//        }
+//
+//        //choose kind card to drop
+//        for (int i = 0; i < player.getKindCards().size(); i++) {
+//            final int index = i;
+//            player.getKindCardNode(i).setOnMouseClicked(event -> {
+//                final int selectedIndex = index;
+//                event.consume();
+//                upcard.keepCard((Card) player.getKindCardNode(index));
+//                botAction();
+//            });
+//            player.getKindCardNode(i).setOnMouseEntered(event -> {
+//                final int selectedIndex = index;
+//                player.getKindCardNode(index).setEffect(dropshadow);
+//            });
+//            player.getKindCardNode(i).setOnMouseExited(event -> {
+//                final int selectedIndex = index;
+//                player.getKindCardNode(index).setEffect(null);
+//            });
+//        }
     }
 
     private void startNewGame() {
@@ -255,20 +363,10 @@ public class GinRummy extends Application {
         bot.reset();
         player.reset();
 
-        bot.takeDeadwoodCard(new Card("h", "3"));
-        bot.takeDeadwoodCard(new Card("s", "3"));
-        bot.takeDeadwoodCard(new Card("h", "4"));
-        bot.takeDeadwoodCard(new Card("s", "7"));
-        bot.takeDeadwoodCard(new Card("h", "5"));
-        bot.takeDeadwoodCard(new Card("h", "n"));
-        bot.takeDeadwoodCard(new Card("c", "8"));
-        bot.takeDeadwoodCard(new Card("s", "4"));
-        bot.takeDeadwoodCard(new Card("s", "5"));
-        bot.takeDeadwoodCard(new Card("h", "p"));
         //player and bot draw card
         for (int i = 0; i < 10; i++) {
             player.takeDeadwoodCard(deck.drawCard());
-//            bot.takeDeadwoodCard(deck.drawCard());
+            bot.takeDeadwoodCard(deck.drawCard());
         }
 
         //deck keep card
@@ -277,14 +375,8 @@ public class GinRummy extends Application {
         }
 
         //open top card
-//        upcard.keepCard(deck.drawCard());
-        upcard.keepCard(new Card("h", "6"));
-
-        //print test
-        System.out.println(player.toString());
-        System.out.println(bot.toString());
-        System.out.println(drawpile.toString());
-        System.out.println(upcard.toString());
+        upcard.keepCard(deck.drawCard());
+//        upcard.keepCard(new Card("h", "6"));
     }
 
     @Override

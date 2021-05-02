@@ -26,7 +26,10 @@ public class UpCard {
     }
 
     public Node drawCard() {
-        return cards.remove(cards.size() - 1);
+        Node card;
+        card = cards.get(cards.size() - 1);
+        cards.remove(cards.size() - 1);
+        return card;
     }
 
     public char getSuit(int index) {
@@ -73,7 +76,7 @@ public class UpCard {
     public void reset() {
         cards.clear();
     }
-    
+
     @Override
     public String toString() {
         return cards.toString();
