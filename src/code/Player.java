@@ -19,8 +19,6 @@ public class Player {
     private ObservableList<Node> deadwoodCards;
     private ObservableList<Node> straightCards;
     private ObservableList<Node> kindCards;
-    double orgSceneX, orgSceneY;
-    double orgTranslateX, orgTranslateY;
     ArrayList<Integer> clubs = new ArrayList<>();
     ArrayList<Integer> diamonds = new ArrayList<>();
     ArrayList<Integer> hearts = new ArrayList<>();
@@ -72,11 +70,11 @@ public class Player {
     public Node getStraightCardNode(int index) {
         return straightCards.get(index);
     }
-    
+
     public Node getKindCardNode(int index) {
         return kindCards.get(index);
     }
-    
+
     public Node DropDeadwoodCard(int index) {
         Node card = deadwoodCards.get(index);
         deadwoodCards.remove(index);
@@ -345,8 +343,26 @@ public class Player {
     }
 
     public void sortDeadwoodCards() {
+
+        System.out.println("straight card now : " + straightCards);
+        System.out.println("kind card now : " + kindCards);
+        if (straightCards != null) {
+            for (int i = 0; i < straightCards.size(); i++) {
+//                System.out.println(i + "bf card add : " + deadwoodCards);
+                deadwoodCards.add(straightCards.get(i));
+                System.out.println(i + "af card add : " + deadwoodCards);
+            }
+            straightCards.clear();
+        }
+        if (kindCards != null) {
+            for (int i = 0; i < kindCards.size(); i++) {
+                deadwoodCards.add(kindCards.get(i));
+            }
+            kindCards.clear();
+        }
         //sort card in deadwood card
         sortCardsByRank(deadwoodCards);
+        System.out.println("merge card in deadwood and sort : " + deadwoodCards);
 
         //CHECK KIND
         kindInHand = getKindIndex(addRankToIntArraylist(deadwoodCards));

@@ -42,10 +42,10 @@ public class UpCard {
 
     public int getRankValue(int index) {
         int cardValue = 0;
-        if (cards.get(index).toString().charAt(0) == '0'
-                || cards.get(index).toString().charAt(0) == 'j'
-                || cards.get(index).toString().charAt(0) == 'q'
-                || cards.get(index).toString().charAt(0) == 'k') {
+        if (cards.get(index).toString().charAt(0) == 'm'
+                || cards.get(index).toString().charAt(0) == 'n'
+                || cards.get(index).toString().charAt(0) == 'o'
+                || cards.get(index).toString().charAt(0) == 'p') {
             cardValue = 10;
         } else {
             cardValue = Character.getNumericValue(cards.get(index).toString().charAt(0));
