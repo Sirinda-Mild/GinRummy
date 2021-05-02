@@ -216,7 +216,6 @@ public class GinRummy extends Application {
 
             playerDropCard();
             if (bot.Deadwood() <= 10) {
-                
                 playerScore.setLayoutX(276);
                 playerScore.setLayoutX(426);
                 botScore.setLayoutX(600);
@@ -225,6 +224,18 @@ public class GinRummy extends Application {
                 playerScore.textProperty().bind(new SimpleStringProperty("").concat(Integer.toString(player.Deadwood())));
                 botScore.textProperty().bind(new SimpleStringProperty("").concat(Integer.toString(bot.Deadwood())));
                 root.getChildren().add(endBGLose);
+                root.getChildren().add(playerScore);
+                root.getChildren().add(botScore);
+            }
+            if (player.Deadwood() <= 10) {
+                playerScore.setLayoutX(276);
+                playerScore.setLayoutX(426);
+                botScore.setLayoutX(600);
+                botScore.setLayoutX(426);
+                
+                playerScore.textProperty().bind(new SimpleStringProperty("").concat(Integer.toString(player.Deadwood())));
+                botScore.textProperty().bind(new SimpleStringProperty("").concat(Integer.toString(bot.Deadwood())));
+                root.getChildren().add(endBGWin);
                 root.getChildren().add(playerScore);
                 root.getChildren().add(botScore);
             }
@@ -248,9 +259,6 @@ public class GinRummy extends Application {
             buttonBox.getChildren().remove(buttonTake);
             buttonBox.getChildren().remove(buttonNew);
             buttonBox.getChildren().add(buttonEndround);
-            if (player.Deadwood() <= 10) {
-                buttonBox.getChildren().add(buttonGin);
-            }
 
             playerDropCard();
 
@@ -299,9 +307,6 @@ public class GinRummy extends Application {
             buttonBox.getChildren().remove(buttonTake);
             buttonBox.getChildren().remove(buttonNew);
             buttonBox.getChildren().add(buttonEndround);
-            if (player.Deadwood() <= 10) {
-                buttonBox.getChildren().add(buttonGin);
-            }
 
             playerDropCard();
             //sort card
@@ -312,27 +317,6 @@ public class GinRummy extends Application {
             playerDeadwood.textProperty().bind(new SimpleStringProperty("").concat(Integer.toString(player.Deadwood())));
             countDrawpile.textProperty().bind(new SimpleStringProperty("").concat(Integer.toString(drawpile.getSize())));
 
-        });
-
-        //BUTTON GIN
-        buttonGin.setOnMousePressed(event -> {
-            if (player.Deadwood() < bot.Deadwood()) {
-                playerScoreInt = bot.Deadwood() - player.Deadwood();
-                botScoreInt = 0;
-                playerScore.textProperty().bind(new SimpleStringProperty("").concat(Integer.toString(player.Deadwood())));
-                botScore.textProperty().bind(new SimpleStringProperty("").concat(Integer.toString(bot.Deadwood())));
-                root.getChildren().add(endBGWin);
-                root.getChildren().add(playerScore);
-                root.getChildren().add(botScore);
-            } else {
-                playerScoreInt = 0;
-                botScoreInt = player.Deadwood() - bot.Deadwood();
-                playerScore.textProperty().bind(new SimpleStringProperty("").concat(Integer.toString(player.Deadwood())));
-                botScore.textProperty().bind(new SimpleStringProperty("").concat(Integer.toString(bot.Deadwood())));
-                root.getChildren().add(endBGLose);
-                root.getChildren().add(playerScore);
-                root.getChildren().add(botScore);
-            }
         });
 
         startNewGame();
