@@ -69,6 +69,8 @@ public class GinRummy extends Application {
     private int botTurn = -1;
     private int playerTurn = -1;
     private boolean isTake = false;
+    private Rectangle backcard = new Rectangle(101, 142);
+    private Image imgbackcard = new Image("resources/backcard.png");
 
     private Parent createGame() {
         //set main pane
@@ -131,7 +133,7 @@ public class GinRummy extends Application {
         HBox playerStraightCardsPane = new HBox(10);
         HBox playerKindCardsPane = new HBox(10);
 
-        HBox drawCardsPane = new HBox(100);
+        HBox drawCardsPane = new HBox(50);
         StackPane upCardPilePane = new StackPane();
         StackPane drawPilePane = new StackPane();
         playerDeadwoodCardsPane.setPadding(new Insets(5, 5, 5, 5));
@@ -158,8 +160,11 @@ public class GinRummy extends Application {
         countDrawpile.setStroke(Color.WHITE);
         countDrawpile.setStrokeWidth(1.5);
 
+        countDrawpile.setLayoutX(387);
+        countDrawpile.setLayoutY(230);
+        backcard.setFill(new ImagePattern(imgbackcard));
         drawCardsPane.setAlignment(Pos.CENTER);
-        drawCardsPane.getChildren().addAll(countDrawpile, upCardPilePane);
+        drawCardsPane.getChildren().addAll(backcard, upCardPilePane);
 
         //declare arraylist
         player = new Player(playerDeadwoodCardsPane.getChildren(), playerStraightCardsPane.getChildren(), playerKindCardsPane.getChildren());
@@ -208,8 +213,11 @@ public class GinRummy extends Application {
         buttonBox.getChildren().addAll(buttonTake, buttonPass);
         buttonBox.setAlignment(Pos.CENTER_RIGHT);
 
-        drawCardsPane.setLayoutX(402);
-        drawCardsPane.setLayoutY(230);
+        drawCardsPane.setLayoutX(367);
+        drawCardsPane.setLayoutY(210);
+
+        countDrawpile.setLayoutX(400);
+        countDrawpile.setLayoutY(290);
 
         playerCardsPane.setLayoutX(20);
         playerCardsPane.setLayoutY(430);
@@ -220,7 +228,7 @@ public class GinRummy extends Application {
         playerInfo.setLayoutX(550);
         playerInfo.setLayoutY(375);
 
-        root.getChildren().addAll(InGameBG, drawCardsPane, buttonBox, playerInfo, playerCardsPane, buttonExit);
+        root.getChildren().addAll(InGameBG, drawCardsPane, countDrawpile, buttonBox, playerInfo, playerCardsPane, buttonExit);
 
         //START GAME
         startNewGame();
@@ -258,15 +266,13 @@ public class GinRummy extends Application {
                 bot.Deadwood();
 
                 playerDropCard();
+
                 //BOT WIN 
                 if (bot.Deadwood() <= 10) {
-                    if (bot.getDeadwoodCards().size() == 1) { //WIN GIN
+                    if (bot.getDeadwoodCards().size() == 0) { //WIN GIN
                         playerScore.textProperty().bind(new SimpleStringProperty("").concat(Integer.toString(player.Deadwood())));
                         botScore.textProperty().bind(new SimpleStringProperty("Dealer Win Gin!!  Dealer Deadwood : ").concat(Integer.toString(bot.Deadwood())));
-                    } else if (bot.getDeadwoodCards().size() == 0) { //WIN KNOCK
-                        playerScore.textProperty().bind(new SimpleStringProperty("").concat(Integer.toString(player.Deadwood())));
-                        botScore.textProperty().bind(new SimpleStringProperty("Dealer Win Big Gin!!  Dealer Deadwood : ").concat(Integer.toString(bot.Deadwood())));
-                    } else {
+                    } else {    //WIN KNOCK
                         playerScore.textProperty().bind(new SimpleStringProperty("").concat(Integer.toString(player.Deadwood())));
                         botScore.textProperty().bind(new SimpleStringProperty("Dealer Win Knock!!  Dealer Deadwood : ").concat(Integer.toString(bot.Deadwood())));
                     }
@@ -276,13 +282,10 @@ public class GinRummy extends Application {
 
                 //PLAYER WIN
                 if (player.Deadwood() <= 10) {
-                    if (player.getDeadwoodCards().size() < 2) { //WIN GIN
+                    if (player.getDeadwoodCards().size() == 0) { //WIN GIN
                         playerScore.textProperty().bind(new SimpleStringProperty("").concat(Integer.toString(player.Deadwood())));
                         botScore.textProperty().bind(new SimpleStringProperty("Player Win Gin!!  Dealer Deadwood : ").concat(Integer.toString(bot.Deadwood())));
-                    } else if (player.getDeadwoodCards().size() == 0) { //WIN KNOCK
-                        playerScore.textProperty().bind(new SimpleStringProperty("").concat(Integer.toString(player.Deadwood())));
-                        botScore.textProperty().bind(new SimpleStringProperty("Player Win Big Gin!!  Dealer Deadwood : ").concat(Integer.toString(bot.Deadwood())));
-                    } else {
+                    } else {    //WIN KNOCK
                         playerScore.textProperty().bind(new SimpleStringProperty("").concat(Integer.toString(player.Deadwood())));
                         botScore.textProperty().bind(new SimpleStringProperty("Player Win Knock!!  Dealer Deadwood : ").concat(Integer.toString(bot.Deadwood())));
                     }
@@ -316,6 +319,31 @@ public class GinRummy extends Application {
             //sort card
             player.sortDeadwoodCards();
             bot.sortDeadwoodCards();
+
+            player.Deadwood();
+            bot.Deadwood();
+
+            //BOT WIN BIG GIN
+            if (bot.Deadwood() == 0) {
+                playerScore.textProperty().bind(new SimpleStringProperty("").concat(Integer.toString(player.Deadwood())));
+                botScore.textProperty().bind(new SimpleStringProperty("Dealer Win Gin!!  Dealer Deadwood : ").concat(Integer.toString(bot.Deadwood())));
+                playerScore.textProperty().bind(new SimpleStringProperty("").concat(Integer.toString(player.Deadwood())));
+                botScore.textProperty().bind(new SimpleStringProperty("Dealer Win Knock!!  Dealer Deadwood : ").concat(Integer.toString(bot.Deadwood())));
+
+                root.getChildren().clear();
+                root.getChildren().addAll(BGopenCardEnd, botCardsPane, playerCardsPane, playerInfo, botScore, buttonExit);
+            }
+
+            //PLAYER WIN BIG GIN
+            if (player.Deadwood() == 0) {
+                playerScore.textProperty().bind(new SimpleStringProperty("").concat(Integer.toString(player.Deadwood())));
+                botScore.textProperty().bind(new SimpleStringProperty("Player Win Gin!!  Dealer Deadwood : ").concat(Integer.toString(bot.Deadwood())));
+                playerScore.textProperty().bind(new SimpleStringProperty("").concat(Integer.toString(player.Deadwood())));
+                botScore.textProperty().bind(new SimpleStringProperty("Player Win Knock!!  Dealer Deadwood : ").concat(Integer.toString(bot.Deadwood())));
+
+                root.getChildren().clear();
+                root.getChildren().addAll(BGopenCardEnd, botCardsPane, playerCardsPane, playerInfo, botScore, buttonExit);
+            }
 
             //Score 
             playerDeadwood.textProperty().bind(new SimpleStringProperty("").concat(Integer.toString(player.Deadwood())));
@@ -385,8 +413,24 @@ public class GinRummy extends Application {
     }
 
     public void botAction() {
+
+        final Duration SEC = Duration.millis(400);
+        TranslateTransition tt = new TranslateTransition(SEC);
+        tt.setFromX(0);
+        tt.setFromY(0);
+        tt.setToX(249);
+        tt.setToY(-160);
+
+        ScaleTransition st = new ScaleTransition(SEC);
+        st.setFromX(1);
+        st.setFromY(1);
+        st.setByX(-0.3);
+        st.setByY(-0.3);
+
+        ParallelTransition drawPileMove = new ParallelTransition(backcard, tt, st);
+
         botTurn = bot.botAction(upcard);
-        System.out.println("BOT ACTION :: BOT TURN :: " + botTurn);
+
         //bot take card from upcard pile
         if (botTurn == 0) {
             bot.takeDeadwoodCard((Card) upcard.drawCard());
@@ -402,6 +446,7 @@ public class GinRummy extends Application {
             upcard.keepCard((Card) bot.botDropCard());
         } else {//bot take card from draw pile
             if (firstPass) {
+                drawPileMove.play();
                 bot.takeDeadwoodCard((Card) drawpile.drawCard());
                 bot.sortDeadwoodCards();
                 upcard.keepCard((Card) bot.botDropCard());
@@ -550,6 +595,7 @@ public class GinRummy extends Application {
         Image imgdecor = new Image("resources/background/decor.gif");
         decor.setFill(new ImagePattern(imgdecor));
 
+        //set effect animation to menu
         ScaleTransition stFortextGin = new ScaleTransition(Duration.millis(800), textGin);
         stFortextGin.setByX(0.05f);
         stFortextGin.setByY(0.05f);
