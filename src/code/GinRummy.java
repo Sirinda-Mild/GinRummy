@@ -9,6 +9,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
+import javafx.animation.FadeTransition;
+import javafx.animation.ParallelTransition;
+import javafx.animation.RotateTransition;
+import javafx.animation.ScaleTransition;
+import javafx.animation.Timeline;
+import javafx.animation.TranslateTransition;
 import javafx.application.Application;
 import static javafx.application.Application.launch;
 import javafx.application.Platform;
@@ -43,6 +49,7 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
+import javafx.util.Duration;
 
 public class GinRummy extends Application {
 
@@ -106,6 +113,10 @@ public class GinRummy extends Application {
         Image imgbuttonGin = new Image("resources/background/GIN_button.png");
         buttonGin.setFill(new ImagePattern(imgbuttonGin));
 
+        Rectangle buttonExit = new Rectangle(10, 10, 100, 65);
+        Image imgbuttonBackToMenu = new Image("resources/background/exit.png");
+        buttonExit.setFill(new ImagePattern(imgbuttonBackToMenu));
+
         //set next pane
         StackPane rootLayout = new StackPane();
         rootLayout.setPadding(new Insets(5, 5, 5, 5));
@@ -160,10 +171,14 @@ public class GinRummy extends Application {
 
         //Bot Score
         Text botScore = new Text("");
-        botScore.setFont(Font.font("Tahoma", 21));
+        botScore.setFont(Font.font("Tahoma", 30));
         botScore.setFill(Color.WHITE);
         botScore.setStroke(Color.WHITE);
         botScore.setStrokeWidth(1.2);
+        botScore.setLayoutX(268);
+        botScore.setLayoutY(280);
+        botCardsPane.setLayoutX(20);
+        botCardsPane.setLayoutY(80);
         Text passText = new Text("PASS");
         passText.setFont(Font.font("Tahoma", 40));
         passText.setFill(Color.YELLOW);
@@ -205,12 +220,26 @@ public class GinRummy extends Application {
         playerInfo.setLayoutX(550);
         playerInfo.setLayoutY(375);
 
-        root.getChildren().addAll(InGameBG, drawCardsPane, buttonBox, playerInfo, playerCardsPane);
+        root.getChildren().addAll(InGameBG, drawCardsPane, buttonBox, playerInfo, playerCardsPane, buttonExit);
 
         //START GAME
         startNewGame();
 
         // INIT BUTTONS
+        //BUTTON EXIT
+        buttonExit.setOnMousePressed(event -> {
+            Platform.exit();
+        }
+        );
+        buttonExit.setOnMouseEntered(event -> {
+            glow.setLevel(1.3);
+            buttonExit.setEffect(glow);
+        });
+
+        buttonExit.setOnMouseExited(event -> {
+            buttonExit.setEffect(null);
+        });
+
         //BUTTON DISCARD
         buttonEndround.setOnMousePressed(event -> {
             if (isSelectedCard == true) {
@@ -229,37 +258,36 @@ public class GinRummy extends Application {
                 bot.Deadwood();
 
                 playerDropCard();
+                //BOT WIN 
                 if (bot.Deadwood() <= 10) {
-//                    playerScore.setLayoutX(650);
-//                    playerScore.setLayoutY(435);
-                    botScore.setLayoutX(400);
-                    botScore.setLayoutY(200);
-                    botCardsPane.setLayoutX(30);
-                    botCardsPane.setLayoutY(80);
-
-                    playerScore.textProperty().bind(new SimpleStringProperty("Player Deadwood : ").concat(Integer.toString(player.Deadwood())));
-                    botScore.textProperty().bind(new SimpleStringProperty("Dealer Deadwood : ").concat(Integer.toString(bot.Deadwood())));
+                    if (bot.getDeadwoodCards().size() == 1) { //WIN GIN
+                        playerScore.textProperty().bind(new SimpleStringProperty("").concat(Integer.toString(player.Deadwood())));
+                        botScore.textProperty().bind(new SimpleStringProperty("Dealer Win Gin!!  Dealer Deadwood : ").concat(Integer.toString(bot.Deadwood())));
+                    } else if (bot.getDeadwoodCards().size() == 0) { //WIN KNOCK
+                        playerScore.textProperty().bind(new SimpleStringProperty("").concat(Integer.toString(player.Deadwood())));
+                        botScore.textProperty().bind(new SimpleStringProperty("Dealer Win Big Gin!!  Dealer Deadwood : ").concat(Integer.toString(bot.Deadwood())));
+                    } else {
+                        playerScore.textProperty().bind(new SimpleStringProperty("").concat(Integer.toString(player.Deadwood())));
+                        botScore.textProperty().bind(new SimpleStringProperty("Dealer Win Knock!!  Dealer Deadwood : ").concat(Integer.toString(bot.Deadwood())));
+                    }
                     root.getChildren().clear();
-                    root.getChildren().addAll(BGopenCardEnd, botCardsPane, playerCardsPane, playerInfo, botScore);
-//                    root.getChildren().add(endBGLose);
-//                    root.getChildren().add(playerScore);
-//                    root.getChildren().add(botScore);
+                    root.getChildren().addAll(BGopenCardEnd, botCardsPane, playerCardsPane, playerInfo, botScore, buttonExit);
                 }
-                if (player.Deadwood() <= 10) {
-//                    playerScore.setLayoutX(650);
-//                    playerScore.setLayoutY(435);
-                    botScore.setLayoutX(310);
-                    botScore.setLayoutY(435);
-                    botCardsPane.setLayoutX(20);
-                    botCardsPane.setLayoutY(50);
 
-                    playerScore.textProperty().bind(new SimpleStringProperty("Player Deadwood : ").concat(Integer.toString(player.Deadwood())));
-                    botScore.textProperty().bind(new SimpleStringProperty("Dealer Deadwood : ").concat(Integer.toString(bot.Deadwood())));
+                //PLAYER WIN
+                if (player.Deadwood() <= 10) {
+                    if (player.getDeadwoodCards().size() < 2) { //WIN GIN
+                        playerScore.textProperty().bind(new SimpleStringProperty("").concat(Integer.toString(player.Deadwood())));
+                        botScore.textProperty().bind(new SimpleStringProperty("Player Win Gin!!  Dealer Deadwood : ").concat(Integer.toString(bot.Deadwood())));
+                    } else if (player.getDeadwoodCards().size() == 0) { //WIN KNOCK
+                        playerScore.textProperty().bind(new SimpleStringProperty("").concat(Integer.toString(player.Deadwood())));
+                        botScore.textProperty().bind(new SimpleStringProperty("Player Win Big Gin!!  Dealer Deadwood : ").concat(Integer.toString(bot.Deadwood())));
+                    } else {
+                        playerScore.textProperty().bind(new SimpleStringProperty("").concat(Integer.toString(player.Deadwood())));
+                        botScore.textProperty().bind(new SimpleStringProperty("Player Win Knock!!  Dealer Deadwood : ").concat(Integer.toString(bot.Deadwood())));
+                    }
                     root.getChildren().clear();
-                    root.getChildren().addAll(BGopenCardEnd, botCardsPane, playerCardsPane, playerInfo, botScore);
-//                    root.getChildren().add(endBGWin);
-//                    root.getChildren().add(playerScore);
-//                    root.getChildren().add(botScore);
+                    root.getChildren().addAll(BGopenCardEnd, botCardsPane, playerCardsPane, playerInfo, botScore, buttonExit);
                 }
 
                 //Score 
@@ -267,7 +295,8 @@ public class GinRummy extends Application {
                 countDrawpile.textProperty().bind(new SimpleStringProperty("").concat(Integer.toString(drawpile.getSize())));
                 isSelectedCard = false;
             }
-        });
+        }
+        );
 
         //BUTTON TAKE
         buttonTake.setOnMousePressed(event -> {
@@ -292,7 +321,8 @@ public class GinRummy extends Application {
             playerDeadwood.textProperty().bind(new SimpleStringProperty("").concat(Integer.toString(player.Deadwood())));
             countDrawpile.textProperty().bind(new SimpleStringProperty("").concat(Integer.toString(drawpile.getSize())));
 
-        });
+        }
+        );
 
         //BUTTON PASS
         buttonPass.setOnMousePressed(event -> {
@@ -313,7 +343,8 @@ public class GinRummy extends Application {
             //Score 
             playerDeadwood.textProperty().bind(new SimpleStringProperty("").concat(Integer.toString(player.Deadwood())));
             countDrawpile.textProperty().bind(new SimpleStringProperty("").concat(Integer.toString(drawpile.getSize())));
-        });
+        }
+        );
 
         //BUTTON NEW
         buttonNew.setOnMousePressed(event -> {
@@ -337,14 +368,18 @@ public class GinRummy extends Application {
             playerDeadwood.textProperty().bind(new SimpleStringProperty("").concat(Integer.toString(player.Deadwood())));
             countDrawpile.textProperty().bind(new SimpleStringProperty("").concat(Integer.toString(drawpile.getSize())));
 
-        });
+        }
+        );
 
         player.sortDeadwoodCards();
+
         bot.sortDeadwoodCards();
 
         //Score 
-        playerDeadwood.textProperty().bind(new SimpleStringProperty("").concat(Integer.toString(player.Deadwood())));
-        countDrawpile.textProperty().bind(new SimpleStringProperty("").concat(Integer.toString(drawpile.getSize())));
+        playerDeadwood.textProperty()
+                .bind(new SimpleStringProperty("").concat(Integer.toString(player.Deadwood())));
+        countDrawpile.textProperty()
+                .bind(new SimpleStringProperty("").concat(Integer.toString(drawpile.getSize())));
 
         return root;
     }
@@ -415,7 +450,7 @@ public class GinRummy extends Application {
 
     }
 
-    public void playerDropCard() {
+    public void playerDropCard() throws IndexOutOfBoundsException {
         //choose deadwood card to drop
         for (int i = 0; i < player.getDeadwoodSize(); i++) {
             final int index = i;
@@ -482,9 +517,9 @@ public class GinRummy extends Application {
         Rectangle BGabout3 = new Rectangle(984, 562);
         Image imgBgabout3 = new Image("resources/background/About-3.jpg");
         BGabout3.setFill(new ImagePattern(imgBgabout3));
-        Rectangle BGabout4 = new Rectangle(984, 562);
-        Image imgBgabout4 = new Image("resources/background/About-4.jpg");
-        BGabout4.setFill(new ImagePattern(imgBgabout4));
+//        Rectangle BGabout4 = new Rectangle(984, 562);
+//        Image imgBgabout4 = new Image("resources/background/About-4.jpg");
+//        BGabout4.setFill(new ImagePattern(imgBgabout4));
 
         Rectangle backMenu = new Rectangle(30, 480, 237, 70);
         Image imgBgbackMenu = new Image("resources/background/backtomenu.png");
@@ -511,6 +546,32 @@ public class GinRummy extends Application {
         Image imgtextGin = new Image("resources/background/ginrummytext.png");
         textGin.setFill(new ImagePattern(imgtextGin));
 
+        Rectangle decor = new Rectangle(55, 50);
+        Image imgdecor = new Image("resources/background/decor.gif");
+        decor.setFill(new ImagePattern(imgdecor));
+
+        ScaleTransition stFortextGin = new ScaleTransition(Duration.millis(800), textGin);
+        stFortextGin.setByX(0.05f);
+        stFortextGin.setByY(0.05f);
+        stFortextGin.setCycleCount(Timeline.INDEFINITE);
+        stFortextGin.setAutoReverse(true);
+        stFortextGin.play();
+
+        final Duration SEC_2 = Duration.millis(7000);
+
+        TranslateTransition tt = new TranslateTransition(SEC_2);
+        tt.setFromX(-100);
+        tt.setToX(1200);
+        tt.setFromY(10);
+        tt.setToY(300);
+
+        ScaleTransition st = new ScaleTransition(SEC_2);
+        st.setByX(3.5);
+        st.setByY(3.5);
+
+        ParallelTransition pt = new ParallelTransition(decor, tt, st);
+        pt.play();
+
         //set button on menu
         Rectangle btnStart = new Rectangle(395, 440, 190, 120);
         Image imgBtnStart = new Image("resources/background/play.png");
@@ -525,7 +586,7 @@ public class GinRummy extends Application {
         btnAbout.setFill(new ImagePattern(imgbtnAbout));
 
         //add all to layout
-        rootLayout.getChildren().addAll(menuBg, textGin, btnStart, btnExit, btnAbout);
+        rootLayout.getChildren().addAll(menuBg, decor, textGin, btnStart, btnExit, btnAbout);
         root.getChildren().addAll(background, rootLayout);
 
         //button action
@@ -552,13 +613,10 @@ public class GinRummy extends Application {
             } else if (page == 2) {
                 root.getChildren().clear();
                 root.getChildren().addAll(BGabout2, back, next);
-            } else if (page == 3) {
+            } else if (page >= 3) {
+                page = 3;
                 root.getChildren().clear();
-                root.getChildren().addAll(BGabout3, back, next);
-            } else if (page >= 4) {
-                page = 4;
-                root.getChildren().clear();
-                root.getChildren().addAll(BGabout4, back);
+                root.getChildren().addAll(BGabout3, back);
             }
         });
 
@@ -576,13 +634,10 @@ public class GinRummy extends Application {
             } else if (page == 2) {
                 root.getChildren().clear();
                 root.getChildren().addAll(BGabout2, back, next);
-            } else if (page == 3) {
+            } else if (page >= 3) {
+                page = 3;
                 root.getChildren().clear();
-                root.getChildren().addAll(BGabout3, back, next);
-            } else if (page >= 4) {
-                page = 4;
-                root.getChildren().clear();
-                root.getChildren().addAll(BGabout4, back);
+                root.getChildren().addAll(BGabout3, back);
             }
         });
 
