@@ -267,7 +267,9 @@ public class GinRummy extends Application {
                 bot.Deadwood();
 
                 playerDropCard();
-
+                if (drawpile.getSize() <= 2) {
+                    botScore.textProperty().bind(new SimpleStringProperty("DRAW!!  Dealer Deadwood : ").concat(Integer.toString(bot.Deadwood())));
+                }
                 //BOT WIN 
                 if (bot.Deadwood() <= 10) {
                     player.Deadwood();
@@ -420,14 +422,11 @@ public class GinRummy extends Application {
         );
 
         player.sortDeadwoodCards();
-
         bot.sortDeadwoodCards();
 
         //Score 
-        playerDeadwood.textProperty()
-                .bind(new SimpleStringProperty("").concat(Integer.toString(player.Deadwood())));
-        countDrawpile.textProperty()
-                .bind(new SimpleStringProperty("").concat(Integer.toString(drawpile.getSize())));
+        playerDeadwood.textProperty().bind(new SimpleStringProperty("").concat(Integer.toString(player.Deadwood())));
+        countDrawpile.textProperty().bind(new SimpleStringProperty("").concat(Integer.toString(drawpile.getSize())));
 
         return root;
     }
@@ -1077,6 +1076,9 @@ public class GinRummy extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception {
+        //ADD ICON
+        primaryStage.getIcons().add(new Image("resources/background/icon.png"));
+
         //MENU
         //set pane for menu
         Pane root = new Pane();
@@ -1094,9 +1096,9 @@ public class GinRummy extends Application {
         Rectangle BGabout3 = new Rectangle(984, 562);
         Image imgBgabout3 = new Image("resources/background/About-3.jpg");
         BGabout3.setFill(new ImagePattern(imgBgabout3));
-//        Rectangle BGabout4 = new Rectangle(984, 562);
-//        Image imgBgabout4 = new Image("resources/background/About-4.jpg");
-//        BGabout4.setFill(new ImagePattern(imgBgabout4));
+        Rectangle BGabout4 = new Rectangle(984, 562);
+        Image imgBgabout4 = new Image("resources/background/About-4.jpg");
+        BGabout4.setFill(new ImagePattern(imgBgabout4));
 
         Rectangle backMenu = new Rectangle(30, 480, 237, 70);
         Image imgBgbackMenu = new Image("resources/background/backtomenu.png");
@@ -1191,10 +1193,13 @@ public class GinRummy extends Application {
             } else if (page == 2) {
                 root.getChildren().clear();
                 root.getChildren().addAll(BGabout2, back, next);
-            } else if (page >= 3) {
-                page = 3;
+            } else if (page == 3) {
                 root.getChildren().clear();
-                root.getChildren().addAll(BGabout3, back);
+                root.getChildren().addAll(BGabout3, back, next);
+            } else if (page >= 4) {
+                page = 4;
+                root.getChildren().clear();
+                root.getChildren().addAll(BGabout4, back);
             }
         });
 
@@ -1212,10 +1217,13 @@ public class GinRummy extends Application {
             } else if (page == 2) {
                 root.getChildren().clear();
                 root.getChildren().addAll(BGabout2, back, next);
-            } else if (page >= 3) {
-                page = 3;
+            } else if (page == 3) {
                 root.getChildren().clear();
-                root.getChildren().addAll(BGabout3, back);
+                root.getChildren().addAll(BGabout3, back, next);
+            } else if (page >= 4) {
+                page = 4;
+                root.getChildren().clear();
+                root.getChildren().addAll(BGabout4, back);
             }
         });
 
