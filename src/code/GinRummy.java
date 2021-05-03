@@ -229,7 +229,7 @@ public class GinRummy extends Application {
         playerInfo.setLayoutX(550);
         playerInfo.setLayoutY(375);
 
-        root.getChildren().addAll(InGameBG, drawCardsPane, countDrawpile, buttonBox, playerInfo, playerCardsPane, buttonExit, botCardsPane);
+        root.getChildren().addAll(InGameBG, drawCardsPane, countDrawpile, buttonBox, playerInfo, playerCardsPane, buttonExit);
 
         //START GAME
         startNewGame();
