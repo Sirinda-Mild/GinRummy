@@ -530,12 +530,16 @@ public class GinRummy extends Application {
             player.getDeadwoodCardNode(i).setOnMouseEntered(event -> {
                 final int selectedIndex = index;
                 event.consume();
-                player.getDeadwoodCardNode(index).setEffect(dropshadow);
+                if (isTake == true) {
+                    player.getDeadwoodCardNode(index).setEffect(dropshadow);
+                }
             });
             player.getDeadwoodCardNode(i).setOnMouseExited(event -> {
                 final int selectedIndex = index;
                 event.consume();
-                player.getDeadwoodCardNode(index).setEffect(null);
+                if (isTake == true) {
+                    player.getDeadwoodCardNode(index).setEffect(null);
+                }
 
             });
         }
